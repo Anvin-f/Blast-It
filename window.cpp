@@ -5,12 +5,11 @@
 #include <string>
 #include "blocklist.h"
 #include "grid.h"
-#include "gamedata.h"
 
-void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
+void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const int table[8][8]) {
     (void)width;
     (void)height;
-    grid.draw(screen, x, y);
+    grid.draw(screen, x, y, table);
 }
 
 void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
@@ -36,10 +35,10 @@ void drawPlayerWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t 
 }
 
 
-void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const std::array<int, 3>& blocks) {
+void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const int blocks[3]) {
     screen.drawBox(x, y, width, height, " Blocks ");
 
-    for (std::size_t i = 0; i < blocks.size(); ++i) {
+    for (std::size_t i = 0; i < 3; ++i) {
         if (blocks[i] == -1 ) {
             continue;
         }

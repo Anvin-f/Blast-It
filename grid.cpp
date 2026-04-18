@@ -26,7 +26,7 @@ std::size_t Grid::cellHeight() const {
     return cellHeight_;
 }
 
-void Grid::draw(Screen& screen, std::size_t offsetX, std::size_t offsetY) const {
+void Grid::draw(Screen& screen, std::size_t offsetX, std::size_t offsetY, const int table[8][8]) const {
     for (std::size_t row = 0; row <= rows_; ++row) {
         std::size_t y = offsetY + row * (cellHeight_ + 1);
         for (std::size_t col = 0; col <= cols_; ++col) {
@@ -47,6 +47,25 @@ void Grid::draw(Screen& screen, std::size_t offsetX, std::size_t offsetY) const 
                 std::size_t x = offsetX + col * (cellWidth_ + 1);
                 screen.setPixel(x, y, '|');
             }
+        }
+    }
+
+    // Fill the cells based on table
+    for (std::size_t row = 0; row < rows_; ++row) {
+        for (std::size_t col = 0; col < cols_; ++col) {
+            std::size_t cellX = offsetX + col * (cellWidth_ + 1) + 1;
+            std::size_t cellY = offsetY + row * (cellHeight_ + 1) + 1;
+            char fillChar = ' ';
+            int value = table[row][col];
+            if (value == 1) {
+                fillChar = '#';
+            } else if (value == 2) {
+                fillChar = '+';
+            } else if (value == 3) {
+                fillChar = '*';
+            }
+            // Since cellWidth_ = 3, fill the middle
+            screen.setPixel(cellX + 1, cellY, fillChar);
         }
     }
 }

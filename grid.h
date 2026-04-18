@@ -8,7 +8,7 @@ class Grid {
 public:
     Grid(std::size_t cols = 8, std::size_t rows = 8, std::size_t cellWidth = 4, std::size_t cellHeight = 2);
 
-    void draw(Screen& screen, std::size_t offsetX = 0, std::size_t offsetY = 0) const;
+    void draw(Screen& screen, std::size_t offsetX, std::size_t offsetY, const int table[8][8]) const;
 
     std::size_t cols() const;
     std::size_t rows() const;
