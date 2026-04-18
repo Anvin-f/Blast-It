@@ -11,6 +11,7 @@
 Gamedata data;
 
 bool checkinsert() {
+    // check if the block can be inserted into the grid
     bool valid = true;
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {
@@ -21,24 +22,23 @@ bool checkinsert() {
 }
 
 void hoverblock(int id) {
-    data.outofbounds = false;
     std::string s = callblock(id);
     int n = s.size();
     int nowr = data.r;
     int nowc = data.c;
 
+    // get rid of the previous hover block
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {
             data.table[i][j] &= 1;
         }
     }
 
+    // insert the new hover block
     for(int i = 0; i < n; i++) {
         if(s[i] == '#' && std::max(nowr, nowc) < 8) data.table[nowr][nowc] |= 2;
         if(s[i] == '/') nowr++, nowc = data.c;
         else nowc++;
-
-        if(std::max(nowr, nowc) >= 8) data.outofbounds = true;
     }
 }
 
@@ -74,12 +74,13 @@ void insertblock() {
             for(int j = 0; j<8; j++) data.table[j][lines[i].second] = 0;
         }
     }
-
+    
+    //calculate the point
     data.point = std::max(point, (int)(30*lines.size()-20))*data.mutiplier;
 }
 
 Gamedata playconfirm(int difficulty) {
-    if(!checkinsert() || data.outofbounds) return data;
+    if(!checkinsert()) return data;
     insertblock();
     data.lineid[data.choosen] = -1;
 
@@ -106,24 +107,34 @@ Gamedata playconfirm(int difficulty) {
 }
 
 Gamedata playchoose(char s) {
+    // change the block wanted to be inserted
     int x = s-'0';
     if(data.lineid[x] != -1) {
         data.choosen = x;
+        // ensure that the hovered block is in the grid
+        std::pair<int, int> dim = dimension(data.lineid[data.choosen]);
+        data.r = std::min(8-dim.first, data.r);
+        data.c = std::min(8-dim.second, data.c);
+
+        // add the hover block to the grid;
         hoverblock(data.lineid[data.choosen]);
     }
     return data;
 }
 
 Gamedata playwasd(int id[], char s) {
+    // the block move in the grid when the player press wasd
+    std::pair<int, int> dim = dimension(id[data.choosen]);
     if(s == 'w') data.r = std::max(0, data.r-1);
-    else if(s == 's') data.r = std::min(7, data.r+1);
+    else if(s == 's') data.r = std::min(8-dim.first, data.r+1);
     else if(s == 'a') data.c = std::max(0, data.c-1);
-    else if(s == 'd') data.c = std::min(7, data.c+1);
+    else if(s == 'd') data.c = std::min(8-dim.second, data.c+1);
     hoverblock(data.lineid[data.choosen]);
     return data;
 }
 
 void initialize(int difficulty) {
+    // initialize the gamedata for a new game
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {
             data.table[i][j] = 0;
@@ -133,15 +144,16 @@ void initialize(int difficulty) {
     data.lineid[0] = std::get<0>(ids);
     data.lineid[1] = std::get<1>(ids);
     data.lineid[2] = std::get<2>(ids);
+
     data.r = 0;
     data.c = 0;
 
     data.choosen = 0;
 
+    data.point = 0;
     data.line = false;
     data.mutiplier = 1;
     
-    data.outofbounds = false;
     data.gameover = false;
     return;
 }
