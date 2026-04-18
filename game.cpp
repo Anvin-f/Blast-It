@@ -87,8 +87,8 @@ void Game::render() {
     screen.drawText(0, 0, "Blast-It Game");
     screen.drawText(0, 1, "Press 'q' to quit");
 
-    drawInfoWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight);
-    drawLogWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight);
+    drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight);
+    drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight);
 
     const std::size_t gridOffsetX = leftPanelWidth + 2;
     const std::size_t gridOffsetY = headerHeight;
