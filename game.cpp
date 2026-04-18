@@ -13,6 +13,7 @@ Game::~Game() {
 
 void Game::initialize() {
     running = true;
+    currentBlocks = {-1, -1, -1};
     std::cout << "Welcome to Blast-It!" << std::endl;
 }
 

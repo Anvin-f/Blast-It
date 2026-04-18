@@ -33,50 +33,26 @@ void drawLogWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t wid
 
 void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const std::array<int, 3>& blocks) {
     screen.drawBox(x, y, width, height, " Blocks ");
-    if (width < 5 || height < 5) {
-        return;
-    }
 
-    std::size_t maxTextWidth = width > 2 ? width - 2 : 0;
-
-    if (blocks[0] >= 0) {
-        for (std::size_t i = 0; i < blocks.size(); ++i) {
-            
-            std::string encodedRef = callblock(blocks[i]);
-            int column = 1;
-            std::string rowStr = "";
-            for (char c : encodedRef) {
-                if (c == '#') {
-                    rowStr += "#";
-                } else if (c == '/') {
-                    screen.drawText(x + 2 + i * 6, y + column, "#");
-                    column++;
-                } else if (c == '.') {
-                    rowStr += " ";
-                }
-            }
-            screen.drawText(x + 2 + i * 6, y + column, rowStr);
+    for (std::size_t i = 0; i < blocks.size(); ++i) {
+        if (blocks[i] == -1 ) {
+            continue;
         }
-    } else {
-        std::ifstream file("line.txt");
-        std::string line;
-        std::size_t row = 0;
-
-        while (row < 5 && std::getline(file, line)) {
-            if (row + 1 >= height) {
-                break;
+        std::string encodedRef = callblock(blocks[i]);
+        int column = 2;
+        std::string rowStr = "";
+        for (char c : encodedRef) {
+            if (c == '#') {
+                rowStr += "#";
+            } else if (c == '/') {
+                screen.drawText(x + 3 + i * 10, y + column, "#");
+                column++;
+                rowStr = "";
+            } else if (c == '.') {
+                rowStr += " ";
             }
-
-            if (line.size() > maxTextWidth) {
-                line = line.substr(0, maxTextWidth);
-            }
-
-            screen.drawText(x + 1, y + 1 + row, line);
-            ++row;
         }
-
-        for (; row < 5 && row + 1 < height; ++row) {
-            screen.drawText(x + 1, y + 1 + row, std::string());
-        }
+        screen.drawText(x + 3 + i * 10, y + column, rowStr);
+        screen.drawText(x + 5 + i * 10, y + 7, std::to_string(i+1));
     }
 }
