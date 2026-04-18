@@ -1,12 +1,12 @@
-#include "lines.h"
+#include "blocks.h"
 #include <iostream>
 #include <fstream>
 
 
 bool checkinsert(int id, int r, int c, int table[][8]) {
-    std::ifstream file("line.txt");
+    std::ifstream file("block.txt");
     if (!file.is_open()) {
-        std::cout << "Failed to open line.txt" << std::endl;
+        std::cout << "Failed to open block.txt" << std::endl;
         return 0;
     }
     bool valid = true;
@@ -34,9 +34,9 @@ bool checkinsert(int id, int r, int c, int table[][8]) {
     return valid;
 }
 void insert(int id, int r, int c, int table[][8]) {
-    std::ifstream file("line.txt");
+    std::ifstream file("block.txt");
     if (!file.is_open()) {
-        std::cout << "Failed to open line.txt" << std::endl;
+        std::cout << "Failed to open block.txt" << std::endl;
         return;
     }
 
