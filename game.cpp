@@ -50,9 +50,9 @@ void Game::update(float deltaTime) {
 }
 
 void Game::render() {
-    // Clear screen (simple way)
     system("cls"); // Windows
-    std::cout << "Blast-It Game" << std::endl;
-    std::cout << "Press 'q' to quit" << std::endl;
-    // Render game state here
+    screen.clear(' ');
+    screen.drawText(0, 0, "Blast-It Game");
+    screen.drawText(0, 1, "Press 'q' to quit");
+    screen.present();
 }

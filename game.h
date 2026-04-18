@@ -3,6 +3,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include "screen.h"
 
 class Game {
 public:
@@ -18,5 +19,6 @@ public:
 
 private:
     bool running;
+    Screen screen;
     // Add game-specific members here
 };
