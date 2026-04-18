@@ -10,12 +10,11 @@ struct Gamedata {
     int r, c;
     int choosen;
     
-    bool gameover;
-    bool outofbounds;
-    
     int point;
     bool line;
     int mutiplier;
+
+    bool gameover;
 };
 
 #endif
