@@ -1,25 +1,27 @@
 FLAGS = -pedantic-errors -std=c++11 -Wall -Wextra
 
-# Default target: typing `make` alone builds the full game.
-blockblast: main.o game.o
-	g++ $(FLAGS) main.o game.o -o blockblast
+blockblast: main.o game.o grid.o screen.o combat.o player.o
+	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o -o blockblast
 
 main.o: main.cpp game.h
 	g++ $(FLAGS) -c main.cpp
 
-game.o: game.cpp game.h
+game.o: game.cpp game.h grid.h screen.h
 	g++ $(FLAGS) -c game.cpp
 
-# When Member A pushes board.cpp/h and block.cpp/h, add:
-# board.o: board.cpp board.h
-# 	g++ $(FLAGS) -c board.cpp
-# block.o: block.cpp block.h
-# 	g++ $(FLAGS) -c block.cpp
-#
-# When Member B pushes player.cpp/h, combat.cpp/h, fileio.cpp/h, add similar rules.
-# Then add the new .o files to BOTH the blockblast rule and the clean rule.
+grid.o: grid.cpp grid.h screen.h
+	g++ $(FLAGS) -c grid.cpp
+
+screen.o: screen.cpp screen.h
+	g++ $(FLAGS) -c screen.cpp
+
+combat.o: combat.cpp combat.h
+	g++ $(FLAGS) -c combat.cpp
+
+player.o: player.cpp player.h
+	g++ $(FLAGS) -c player.cpp
 
 clean:
-	rm -f blockblast main.o game.o
+	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o
 
 .PHONY: clean
