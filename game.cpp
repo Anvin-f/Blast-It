@@ -1,6 +1,6 @@
 #include "game.h"
 
-Game::Game() : running(false) {
+Game::Game() : running(false), screen(80, 25), grid(8, 8, 4, 2) {
 }
 
 Game::~Game() {
@@ -44,15 +44,17 @@ void Game::handleInput() {
 }
 
 void Game::update(float deltaTime) {
+    (void)deltaTime;
     // Update game logic here
     // For now, just print delta time
     // std::cout << "Delta time: " << deltaTime << std::endl;
 }
 
 void Game::render() {
-    // Clear screen (simple way)
     system("cls"); // Windows
-    std::cout << "Blast-It Game" << std::endl;
-    std::cout << "Press 'q' to quit" << std::endl;
-    // Render game state here
+    screen.clear(' ');
+    screen.drawText(0, 0, "Blast-It Game");
+    screen.drawText(0, 1, "Press 'q' to quit");
+    grid.draw(screen, 0, 3);
+    screen.present();
 }
