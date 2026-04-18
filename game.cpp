@@ -1,6 +1,7 @@
 #include "game.h"
+#include "windows.h"
 
-Game::Game() : running(false), screen(80, 25), grid(8, 8, 4, 2) {
+Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1) {
 }
 
 Game::~Game() {
@@ -53,8 +54,22 @@ void Game::update(float deltaTime) {
 void Game::render() {
     system("cls"); // Windows
     screen.clear(' ');
+
+    const std::size_t headerHeight = 3;
+    const std::size_t leftPanelWidth = 22;
+    const std::size_t availableHeight = screen.height() - headerHeight;
+    const std::size_t topPanelHeight = availableHeight * 2 / 3;
+    const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
+
     screen.drawText(0, 0, "Blast-It Game");
     screen.drawText(0, 1, "Press 'q' to quit");
-    grid.draw(screen, 0, 3);
+
+    drawInfoWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight);
+    drawLogWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight);
+
+    const std::size_t gridOffsetX = leftPanelWidth + 2;
+    const std::size_t gridOffsetY = headerHeight;
+    drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight);
+
     screen.present();
 }
