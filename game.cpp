@@ -1,10 +1,11 @@
 #include "game.h"
 #include "windows.h"
+#include "chooseblocks.h"
 #ifdef _WIN32
 #include <conio.h>
 #endif
 
-Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1) {
+Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1), currentBlocks({-1, -1, -1}) {
 }
 
 Game::~Game() {
@@ -55,8 +56,15 @@ void Game::handleInput() {
     if (keyPressed) {
         if (input == 'q' || input == 'Q') {
             running = false;
+        } else if (input == 'r' || input == 'R') {
+            startNewCycle();
         }
     }
+}
+
+void Game::startNewCycle() {
+    auto [id1, id2, id3] = chooseblocks(1);
+    currentBlocks = {id1, id2, id3};
 }
 
 void Game::update(float deltaTime) {
@@ -67,12 +75,12 @@ void Game::update(float deltaTime) {
 }
 
 void Game::render() {
-    system("cls"); // Windows
     screen.clear(' ');
 
     const std::size_t headerHeight = 3;
+    const std::size_t footerHeight = 5;
     const std::size_t leftPanelWidth = 22;
-    const std::size_t availableHeight = screen.height() - headerHeight;
+    const std::size_t availableHeight = screen.height() - headerHeight - footerHeight;
     const std::size_t topPanelHeight = availableHeight * 2 / 3;
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
 
@@ -85,6 +93,8 @@ void Game::render() {
     const std::size_t gridOffsetX = leftPanelWidth + 2;
     const std::size_t gridOffsetY = headerHeight;
     drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight);
+
+    drawLinesWindow(screen, 0, headerHeight + availableHeight, screen.width(), footerHeight, currentBlocks);
 
     screen.present();
 }
