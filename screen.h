@@ -12,6 +12,7 @@ public:
     void clear(char fill = ' ');
     void setPixel(std::size_t x, std::size_t y, char c);
     void drawText(std::size_t x, std::size_t y, const std::string& text);
+    void drawBox(std::size_t x, std::size_t y, std::size_t width, std::size_t height, const std::string& title = "");
     void present() const;
 
     std::size_t width() const;
