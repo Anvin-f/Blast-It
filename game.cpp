@@ -1,5 +1,8 @@
 #include "game.h"
 #include "windows.h"
+#ifdef _WIN32
+#include <conio.h>
+#endif
 
 Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1) {
 }
@@ -34,10 +37,22 @@ bool Game::isRunning() const {
 }
 
 void Game::handleInput() {
-    // For simplicity, check for 'q' to quit
+    bool keyPressed = false;
+    char input = 0;
+
+#ifdef _WIN32
+    if (_kbhit()) {
+        input = static_cast<char>(_getch());
+        keyPressed = true;
+    }
+#else
     if (std::cin.peek() != EOF) {
-        char input;
         std::cin >> input;
+        keyPressed = true;
+    }
+#endif
+
+    if (keyPressed) {
         if (input == 'q' || input == 'Q') {
             running = false;
         }
