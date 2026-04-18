@@ -5,6 +5,7 @@
 #include <string>
 #include "blocklist.h"
 #include "grid.h"
+#include "gamedata.h"
 
 void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
     (void)width;
