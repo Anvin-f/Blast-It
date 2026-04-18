@@ -3,6 +3,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include "screen.h"
+#include "grid.h"
 
 class Game {
 public:
@@ -18,5 +20,6 @@ public:
 
 private:
     bool running;
-    // Add game-specific members here
+    Screen screen;
+    Grid grid;
 };
