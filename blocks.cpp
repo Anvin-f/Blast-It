@@ -133,7 +133,7 @@ Gamedata playwasd(char s) {
     return data;
 }
 
-void initialize(int difficulty) {
+void blockInit(int difficulty) {
     // initialize the gamedata for a new game
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {

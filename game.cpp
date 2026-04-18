@@ -1,11 +1,12 @@
 #include "game.h"
 #include "windows.h"
 #include "chooseblocks.h"
+#include "blocks.h"
 #ifdef _WIN32
 #include <conio.h>
 #endif
 
-Game::Game() : running(false), screen(85, 30), grid(8, 8, 3, 1), currentBlocks({-1, -1, -1}) {
+Game::Game() : running(false), screen(85, 30), grid(8, 8, 3, 1) {
 }
 
 Game::~Game() {
@@ -13,7 +14,19 @@ Game::~Game() {
 
 void Game::initialize() {
     running = true;
-    currentBlocks = {-1, -1, -1};
+    blockInit(1);
+    // Initialize game data
+    std::fill(&data.table[0][0], &data.table[0][0] + 64, 0);
+    data.lineid[0] = -1;
+    data.lineid[1] = -1;
+    data.lineid[2] = -1;
+    data.r = 0;
+    data.c = 0;
+    data.choosen = -1;
+    data.point = 0;
+    data.line = false;
+    data.mutiplier = 1;
+    data.gameover = false;
     std::cout << "Welcome to Blast-It!" << std::endl;
 }
 
@@ -57,15 +70,14 @@ void Game::handleInput() {
     if (keyPressed) {
         if (input == 'q' || input == 'Q') {
             running = false;
-        } else if (input == 'r' || input == 'R') {
-            startNewCycle();
+        } else if (input == '1' || input == '2' || input == '3') {
+            data = playchoose(input);
+        } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
+            data = playwasd(input);
+        } else if (input == 'c') {
+            data = playconfirm(1);
         }
     }
-}
-
-void Game::startNewCycle() {
-    auto [id1, id2, id3] = chooseblocks(1);
-    currentBlocks = {id1, id2, id3};
 }
 
 void Game::update(float deltaTime) {
@@ -92,9 +104,9 @@ void Game::render() {
 
     const std::size_t gridOffsetX = leftPanelWidth + 2;
     const std::size_t gridOffsetY = headerHeight;
-    drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight);
+    drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight, data.table);
 
-    drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, currentBlocks);
+    drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
 
     screen.present();
 }
