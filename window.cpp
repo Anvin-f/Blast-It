@@ -12,21 +12,25 @@ void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t
     grid.draw(screen, x, y);
 }
 
-void drawInfoWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
-    screen.drawBox(x, y, width, height, " Info ");
+void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
+    screen.drawBox(x, y, width, height, " Enemy ");
     if (width > 4 && height > 2) {
-        screen.drawText(x + 2, y + 1, "Status Window");
-        screen.drawText(x + 2, y + 2, "Health: 100%");
-        screen.drawText(x + 2, y + 3, "Score: 0");
+        screen.drawText(x + 2, y + 1, "Name: ");
+        screen.drawText(x + 22, y + 1, "Health: ");
+        screen.drawText(x + 2, y + 2, "Diff: ");
     }
 }
 
-void drawLogWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
-    screen.drawBox(x, y, width, height, " Log ");
+void drawPlayerWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
+    screen.drawBox(x, y, width, height, " Player Actions ");
     if (width > 4 && height > 2) {
-        screen.drawText(x + 2, y + 1, "Event Log");
-        screen.drawText(x + 2, y + 2, "- Ready");
-        screen.drawText(x + 2, y + 3, "- Waiting...");
+        screen.drawText(x + 2, y + 1, "Health: ");
+        screen.drawText(x + 17, y + 1, "Defence: ");
+        screen.drawText(x + 32, y + 1, "AP: ");
+        screen.drawText(x + 2, y + 3, "1. Attack");
+        screen.drawText(x + 2, y + 5, "2. Special");
+        screen.drawText(x + 22, y + 3, "3. Heal");
+        screen.drawText(x + 22, y + 5, "4. Save AP");
     }
 }
 
