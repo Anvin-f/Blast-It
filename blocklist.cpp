@@ -1,3 +1,4 @@
+#include "chooseblocks.h"
 #include "blocklist.h"
 #include <string>
 #include <vector>
