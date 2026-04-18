@@ -45,11 +45,12 @@ void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t 
         std::string encodedRef = callblock(blocks[i]);
         int column = 2;
         std::string rowStr = "";
-        for (char c : encodedRef) {
+        for (int j = 0; j < encodedRef.length(); j++) {
+            char c = encodedRef[j];
             if (c == '#') {
                 rowStr += "#";
             } else if (c == '/') {
-                screen.drawText(x + 3 + i * 10, y + column, "#");
+                screen.drawText(x + 3 + i * 10, y + column, rowStr);
                 column++;
                 rowStr = "";
             } else if (c == '.') {
