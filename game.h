@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -19,7 +20,10 @@ public:
     void render();
 
 private:
+    void startNewCycle();
+
     bool running;
     Screen screen;
     Grid grid;
+    std::array<int, 3> currentBlocks;
 };

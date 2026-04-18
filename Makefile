@@ -1,7 +1,7 @@
-FLAGS = -pedantic-errors -std=c++11 -Wall -Wextra
+FLAGS = -pedantic-errors -std=c++17 -Wall -Wextra
 
-blockblast: main.o game.o grid.o screen.o combat.o player.o lines.o grid_window.o log_window.o status_window.o
-	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o lines.o grid_window.o log_window.o status_window.o -o blockblast
+blockblast: main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o
+	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o -o blockblast
 
 main.o: main.cpp game.h
 	g++ $(FLAGS) -c main.cpp
@@ -21,19 +21,16 @@ combat.o: combat.cpp combat.h
 player.o: player.cpp player.h
 	g++ $(FLAGS) -c player.cpp
 
-lines.o: lines.cpp lines.h
-	g++ $(FLAGS) -c lines.cpp
+chooseblocks.o: chooseblocks.cpp chooseblocks.h
+	g++ $(FLAGS) -c chooseblocks.cpp
 
-grid_window.o: grid_window.cpp windows.h screen.h grid.h
-	g++ $(FLAGS) -c grid_window.cpp
+window.o: window.cpp windows.h screen.h grid.h blocklist.h
+	g++ $(FLAGS) -c window.cpp
 
-log_window.o: log_window.cpp windows.h screen.h
-	g++ $(FLAGS) -c log_window.cpp
-
-status_window.o: status_window.cpp windows.h screen.h
-	g++ $(FLAGS) -c status_window.cpp
+blocklist.o: blocklist.cpp blocklist.h
+	g++ $(FLAGS) -c blocklist.cpp
 
 clean:
-	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o lines.o grid_window.o log_window.o status_window.o
+	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o
 
 .PHONY: clean
