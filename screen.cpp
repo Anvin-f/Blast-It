@@ -66,6 +66,7 @@ void Screen::drawBox(std::size_t x, std::size_t y, std::size_t width, std::size_
 }
 
 void Screen::present() const {
+    std::cout << "\x1b[H"; // move cursor to home position
     for (std::size_t row = 0; row < height_; ++row) {
         const char* rowStart = &buffer_[row * width_];
         std::cout.write(rowStart, width_);

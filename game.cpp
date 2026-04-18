@@ -67,12 +67,12 @@ void Game::update(float deltaTime) {
 }
 
 void Game::render() {
-    system("cls"); // Windows
     screen.clear(' ');
 
     const std::size_t headerHeight = 3;
+    const std::size_t footerHeight = 5;
     const std::size_t leftPanelWidth = 22;
-    const std::size_t availableHeight = screen.height() - headerHeight;
+    const std::size_t availableHeight = screen.height() - headerHeight - footerHeight;
     const std::size_t topPanelHeight = availableHeight * 2 / 3;
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
 
@@ -85,6 +85,8 @@ void Game::render() {
     const std::size_t gridOffsetX = leftPanelWidth + 2;
     const std::size_t gridOffsetY = headerHeight;
     drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight);
+
+    drawLinesWindow(screen, 0, headerHeight + availableHeight, screen.width(), footerHeight);
 
     screen.present();
 }
