@@ -122,9 +122,9 @@ Gamedata playchoose(char s) {
     return data;
 }
 
-Gamedata playwasd(int id[], char s) {
+Gamedata playwasd(char s) {
     // the block move in the grid when the player press wasd
-    std::pair<int, int> dim = dimension(id[data.choosen]);
+    std::pair<int, int> dim = dimension(data.lineid[data.choosen]);
     if(s == 'w') data.r = std::max(0, data.r-1);
     else if(s == 's') data.r = std::min(8-dim.first, data.r+1);
     else if(s == 'a') data.c = std::max(0, data.c-1);

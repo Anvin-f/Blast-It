@@ -1,8 +1,13 @@
+#include "gamedata.h"
 #include <cstddef>
 #include <vector>
 #include <fstream>
 
-bool checkinsert(int id, int x, int y);
-int insertblock(int id, int x, int y);
-void play(int difficulty);
+bool checkinsert();
+void hoverblock(int id);
+void insertblock();
+Gamedata playconfirm(int difficulty);
+Gamedata playchoose(char s);
+Gamedata playwasd(char s);
+void initialize(int difficulty);
 
