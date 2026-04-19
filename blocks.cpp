@@ -134,7 +134,7 @@ Gamedata playchoose(char s) {
     // change the block wanted to be inserted
     int x = s-'0';
     if(data.lineid[x] != -1) {
-        data.choosen = x;
+        data.choosen = x - 1;
         // ensure that the hovered block is in the grid
         std::pair<int, int> dim = dimension(data.lineid[data.choosen]);
         data.r = std::min(8-dim.first, data.r);
