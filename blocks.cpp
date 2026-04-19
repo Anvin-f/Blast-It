@@ -79,6 +79,27 @@ void insertblock() {
     data.point = std::max(point, (int)(30*lines.size()-20))*data.mutiplier;
 }
 
+bool checkallinsert(int id) {
+    // check if the block with id can be inserted into the grid
+    std::string s = callblock(id);
+    int n = s.size();
+    for(int r = 0; r<8; r++) {
+        for(int c = 0; c<8; c++) {
+            bool ch = true;
+            int nowr = r, nowc = c;
+            for(int i = 0; i < n; i++) {
+                if(s[i] == '#') {
+                    ch &= nowr < 8 && nowc < 8 && data.table[nowr][nowc] == 0;
+                }
+                if(s[i] == '/') nowr++, nowc = c;
+                else nowc++;
+            }
+            if(ch) return false;
+        }
+    }
+    return true;
+}
+
 Gamedata playconfirm(int difficulty) {
     if(!checkinsert()) return data;
     insertblock();
@@ -102,6 +123,9 @@ Gamedata playconfirm(int difficulty) {
     else data.choosen = 2;
 
     data.gameover = 1;
+    data.gameover &= checkallinsert(data.lineid[0]);
+    data.gameover &= checkallinsert(data.lineid[1]);
+    data.gameover &= checkallinsert(data.lineid[2]);
     
     return data;
 }
