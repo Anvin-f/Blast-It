@@ -8,7 +8,9 @@
 #include <algorithm>
 #include <utility>
 
-bool checkinsert(Gamedata data) {
+Gamedata data;
+
+bool checkinsert() {
     // check if the block can be inserted into the grid
     bool valid = true;
     for(int i = 0; i<8; i++) {
@@ -19,13 +21,12 @@ bool checkinsert(Gamedata data) {
     return valid;
 }
 
-void hoverblock(Gamedata &data) {
-    id = data.lineid[data.choosen];
+void hoverblock(int id) {
     std::string s = callblock(id);
     int n = s.size();
     int nowr = data.r;
     int nowc = data.c;
-    
+
     // get rid of the previous hover block
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {
@@ -41,7 +42,7 @@ void hoverblock(Gamedata &data) {
     }
 }
 
-void insertblock(Gamedata &data) {
+void insertblock() {
     // Insert the block into the game
     for(int i = 0; i<8; i++) {
         for(int j = 0; j<8; j++) {
@@ -58,7 +59,7 @@ void insertblock(Gamedata &data) {
             ch &= data.table[i][j];
             ch2 &= data.table[j][i];
         }
-        
+
         if(ch) lines.emplace_back('r', i);
         if(ch2) lines.emplace_back('c', i);
     }
@@ -78,9 +79,8 @@ void insertblock(Gamedata &data) {
     data.point = std::max(point, (int)(30*lines.size()-20))*data.mutiplier;
 }
 
-pair<int, int> checkallinsert(Gamedata data, int c) {
+bool checkallinsert(int id) {
     // check if the block with id can be inserted into the grid
-    id = data.lineid[c];
     std::string s = callblock(id);
     int n = s.size();
     for(int r = 0; r<8; r++) {
@@ -88,26 +88,23 @@ pair<int, int> checkallinsert(Gamedata data, int c) {
             bool ch = true;
             int nowr = r, nowc = c;
             for(int i = 0; i < n; i++) {
-                if(s[i] == '#' && std::max(nowr, nowc) < 8) {
-                    ch &= data.table[nowr][nowc] == 0;
+                if(s[i] == '#') {
+                    ch &= nowr < 8 && nowc < 8 && data.table[nowr][nowc] == 0;
                 }
-                else if(std::max(nowr, nowc) >= 8) ch = false;
                 if(s[i] == '/') nowr++, nowc = c;
                 else nowc++;
             }
-            if(ch) return {r, c};
+            if(ch) return false;
         }
     }
-    return {-1, -1};
+    return true;
 }
-
-Gamedata data;
 
 Gamedata refresh(int difficulty) {
     if(data.line) data.mutiplier++;
     else data.mutiplier = 1;
     data.line = false;
-    std::tuple<int, int, int> ids = chooseblocks(data, difficulty);
+    std::tuple<int, int, int> ids = chooseblocks(difficulty);
     data.lineid[0] = std::get<0>(ids);
     data.lineid[1] = std::get<1>(ids);
     data.lineid[2] = std::get<2>(ids);
@@ -116,8 +113,8 @@ Gamedata refresh(int difficulty) {
 }
 
 Gamedata playconfirm() {
-    if(!checkinsert(data)) return data;
-    insertblock(data);
+    if(!checkinsert()) return data;
+    insertblock();
     data.lineid[data.choosen] = -1;
 
     data.r = 0;
@@ -128,9 +125,9 @@ Gamedata playconfirm() {
     else data.choosen = 2;
 
     data.gameover = 1;
-    if(data.lineid[0] != -1) data.gameover &= (checkallinsert(data, 0) == {-1, -1});
-    if(data.lineid[1] != -1) data.gameover &= (checkallinsert(data, 1) == {-1, -1});
-    if(data.lineid[2] != -1) data.gameover &= (checkallinsert(data, 2) == {-1, -1});
+    if(data.lineid[0] != -1) data.gameover &= checkallinsert(data.lineid[0]);
+    if(data.lineid[1] != -1) data.gameover &= checkallinsert(data.lineid[1]);
+    if(data.lineid[2] != -1) data.gameover &= checkallinsert(data.lineid[2]);
 
     return data;
 }
@@ -146,7 +143,7 @@ Gamedata playchoose(char s) {
         data.c = std::min(8-dim.second, data.c);
 
         // add the hover block to the grid;
-        hoverblock(data);
+        hoverblock(data.lineid[data.choosen]);
     }
     return data;
 }
@@ -158,7 +155,7 @@ Gamedata playwasd(char s) {
     else if(s == 's') data.r = std::min(8-dim.first, data.r+1);
     else if(s == 'a') data.c = std::max(0, data.c-1);
     else if(s == 'd') data.c = std::min(8-dim.second, data.c+1);
-    hoverblock(data);
+    hoverblock(data.lineid[data.choosen]);
     return data;
 }
 
@@ -169,7 +166,7 @@ Gamedata blockInit(int difficulty) {
             data.table[i][j] = 0;
         }
     }
-    std::tuple<int, int, int> ids = chooseblocks(data, difficulty);
+    std::tuple<int, int, int> ids = chooseblocks(difficulty);
     data.lineid[0] = std::get<0>(ids);
     data.lineid[1] = std::get<1>(ids);
     data.lineid[2] = std::get<2>(ids);

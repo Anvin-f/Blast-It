@@ -1,37 +1,29 @@
 #include "chooseblocks.h"
-#include "blocks.h"
-#include "gamedata.h"
 #include <tuple>
-#include<vector>
 #include<random>
 #include<ctime>
 
-std::tuple<int, int, int> chooseblocks(Gamedata data, int difficulty) {
+std::tuple<int, int, int> chooseblocks(int difficulty) {
     std::mt19937 mt(time(nullptr)); 
-    int x;
-    if(difficulty == 1) x = 14;
-    else if(difficulty == 2) x = 19;
-    else x = 22;
-
-    vector<int> vec;
-
-    while(vec.size() != 3) {
-        int posid = mt() % x;
-        if(posid >= 19) posid -= 3;
-        data.lineid[0] = posid;
-        pair<int, int> x = checkallinsert(data, 0);
-        if(x.first != -1) {
-            vec.push_back(posid);
-            data.r = x.first;
-            data.c = x.second;
-            data.choosen = 0;
-            hoverblock(data);
-            insertblock(data);
-        }
+    if(difficulty == 1) {
+        int id1 = mt()%14;
+        int id2 = mt()%14;
+        int id3 = mt()%14;
+        return std::make_tuple(id1, id2, id3);
     }
-
-    if(mt()%2) swap(vec[0], vec[1]);
-    if(mt()%2) swap(vec[0], vec[2]);
-    if(mt()%2) swap(vec[1], vec[2]);
-    return {vec[0], vec[1], vec[2]};
+    else if(difficulty == 2) {
+        int id1 = mt()%19;
+        int id2 = mt()%19;
+        int id3 = mt()%19;
+        return std::make_tuple(id1, id2, id3);
+    }
+    else {
+        int id1 = mt()%22;
+        int id2 = mt()%22;
+        int id3 = mt()%22;
+        if(id1 >= 19) id1 -= 3;
+        if(id2 >= 19) id2 -= 3;
+        if(id3 >= 19) id3 -= 3;
+        return std::make_tuple(id1, id2, id3);
+    }
 }
