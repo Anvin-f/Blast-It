@@ -25,6 +25,7 @@ std::tuple<int, int, int> chooseblocks(Gamedata data, int difficulty) {
             data.r = x.first;
             data.c = x.second;
             data.choosen = 0;
+            hoverblock(data);
             insertblock(data);
         }
     }
