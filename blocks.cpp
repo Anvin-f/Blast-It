@@ -134,7 +134,7 @@ Gamedata playconfirm() {
 
 Gamedata playchoose(char s) {
     // change the block wanted to be inserted
-    int x = s-'0'-1;
+    int x = s-'0';
     if(data.lineid[x] != -1) {
         data.choosen = x - 1;
         // ensure that the hovered block is in the grid

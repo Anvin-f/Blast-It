@@ -6,7 +6,7 @@
 #include <conio.h>
 #endif
 
-Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1) {
+Game::Game() : running(false), screen(85, 30), grid(8, 8, 3, 1) {
 }
 
 Game::~Game() {
