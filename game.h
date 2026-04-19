@@ -7,6 +7,8 @@
 #include "screen.h"
 #include "grid.h"
 #include "gamedata.h"
+#include "combat.h"
+#include "player.h"
 
 class Game {
 public:
@@ -26,5 +28,6 @@ private:
     Screen screen;
     Grid grid;
     Gamedata data;
-
+    int currentDifficulty = 1;
+    bool isRPGMode = false;
 };
