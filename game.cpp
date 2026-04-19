@@ -40,6 +40,12 @@ bool Game::isRunning() const {
     return running;
 }
 
+void Game::playerLost() {
+    std::cout << "Game Over! You have been defeated." << std::endl;
+    running = false;
+    return;
+}
+
 void Game::handleInput() {
     bool keyPressed = false;
     char input = 0;
@@ -86,9 +92,12 @@ void Game::handleInput() {
 
                 if (total > plr.ap_reserve){return;}
                 CombatResult result = resolveCombatTurn(plr, mtr, choice);
-                std::cout << result.log_message << std::endl;
                 if (result.monster_defeated) {
                     mtr = initMonster(currentDifficulty, plr.kills);
+                }
+                if (result.player_defeated) {
+                    playerLost();
+                    return;
                 }
                 isRPGMode = false;
                 data = refresh(currentDifficulty);
@@ -139,11 +148,11 @@ void Game::handleInput() {
         } else if (input == '\n' || input == '\r') {
             data = playconfirm();
             plr.ap_reserve += data.point;
-            if (data.lineid[0] == -1 && data.lineid[1] == -1 && data.lineid[2] == -1) {
+            if (data.gameover) {
                 isRPGMode = true;
             }
         }
-        
+        //if (lostinblockblast) {playerLost();return;}
     }
 }
 
