@@ -1,7 +1,7 @@
 FLAGS = -pedantic-errors -std=c++17 -Wall -Wextra
 
-blockblast: main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o
-	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o -o blockblast
+blockblast: main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blocks.o
+	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blocks.o -o blockblast
 
 main.o: main.cpp game.h
 	g++ $(FLAGS) -c main.cpp
@@ -29,6 +29,9 @@ window.o: window.cpp windows.h screen.h grid.h blocklist.h
 
 blocklist.o: blocklist.cpp blocklist.h
 	g++ $(FLAGS) -c blocklist.cpp
+
+blocks.o: blocks.cpp blocks.h
+	g++ $(FLAGS) -c blocks.cpp
 
 clean:
 	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o

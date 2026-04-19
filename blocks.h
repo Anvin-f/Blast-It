@@ -9,5 +9,5 @@ void insertblock();
 Gamedata playconfirm(int difficulty);
 Gamedata playchoose(char s);
 Gamedata playwasd(char s);
-void initialize(int difficulty);
+void blockInit(int difficulty);
 

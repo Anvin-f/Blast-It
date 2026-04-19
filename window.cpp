@@ -5,12 +5,11 @@
 #include <string>
 #include "blocklist.h"
 #include "grid.h"
-#include "gamedata.h"
 
-void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
+void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const int table[8][8]) {
     (void)width;
     (void)height;
-    grid.draw(screen, x, y);
+    grid.draw(screen, x, y, table);
 }
 
 void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height) {
@@ -36,21 +35,22 @@ void drawPlayerWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t 
 }
 
 
-void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const std::array<int, 3>& blocks) {
+void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const int blocks[3]) {
     screen.drawBox(x, y, width, height, " Blocks ");
 
-    for (std::size_t i = 0; i < blocks.size(); ++i) {
+    for (std::size_t i = 0; i < 3; ++i) {
         if (blocks[i] == -1 ) {
             continue;
         }
         std::string encodedRef = callblock(blocks[i]);
         int column = 2;
         std::string rowStr = "";
-        for (char c : encodedRef) {
+        for (int j = 0; j < encodedRef.length(); j++) {
+            char c = encodedRef[j];
             if (c == '#') {
                 rowStr += "#";
             } else if (c == '/') {
-                screen.drawText(x + 3 + i * 10, y + column, "#");
+                screen.drawText(x + 3 + i * 10, y + column, rowStr);
                 column++;
                 rowStr = "";
             } else if (c == '.') {

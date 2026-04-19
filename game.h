@@ -6,6 +6,7 @@
 #include <thread>
 #include "screen.h"
 #include "grid.h"
+#include "gamedata.h"
 
 class Game {
 public:
@@ -20,10 +21,10 @@ public:
     void render();
 
 private:
-    void startNewCycle();
 
     bool running;
     Screen screen;
     Grid grid;
-    std::array<int, 3> currentBlocks;
+    Gamedata data;
+
 };
