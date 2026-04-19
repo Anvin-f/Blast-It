@@ -30,4 +30,7 @@ private:
     Gamedata data;
     int currentDifficulty = 1;
     bool isRPGMode = false;
+    Player plr;
+    Monster mtr;
+    int ap = 0;
 };

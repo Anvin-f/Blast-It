@@ -6,7 +6,7 @@
 #include <conio.h>
 #endif
 
-Game::Game() : running(false), screen(85, 30), grid(8, 8, 3, 1) {
+Game::Game() : running(false), screen(80, 25), grid(8, 8, 3, 1) {
 }
 
 Game::~Game() {
@@ -14,32 +14,19 @@ Game::~Game() {
 
 void Game::initialize() {
     running = true;
-    blockInit(1);
+    data = blockInit(currentDifficulty);
     // Initialize game data
     std::fill(&data.table[0][0], &data.table[0][0] + 64, 0);
-    data.lineid[0] = -1;
-    data.lineid[1] = -1;
-    data.lineid[2] = -1;
-    data.r = 0;
-    data.c = 0;
-    data.choosen = -1;
-    data.point = 0;
-    data.line = false;
-    data.mutiplier = 1;
-    data.gameover = false;
+    plr = initPlayer(currentDifficulty);
+    mtr = initMonster(currentDifficulty, 0);
+    ap = 0;
     std::cout << "Welcome to Blast-It!" << std::endl;
 }
 
 void Game::run() {
-    auto lastTime = std::chrono::high_resolution_clock::now();
-
     while (isRunning()) {
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float deltaTime = std::chrono::duration<float>(currentTime - lastTime).count();
-        lastTime = currentTime;
-
         handleInput();
-        update(deltaTime);
+        update(0.0f);
         render();
 
         // Simple frame rate control
@@ -68,13 +55,30 @@ void Game::handleInput() {
 #endif
 
     if (!keyPressed) {return;}
+
+    if (!isRPGMode && data.lineid[0] == -1 && data.lineid[1] == -1 && data.lineid[2] == -1) {
+        isRPGMode = true;
+    }
+
     if (input == 'q' || input == 'Q') {
         running = false;
     }
     if (isRPGMode) {
         // RPG mode input handling
         if (input == '1' || input == '2' || input == '3' || input == '4') {
-            // data = resolveCombatTurn(plr, mtr, ap, input);
+            CombatChoice choice = {};
+            if (input == '1') choice.attack_ap = 5;
+            else if (input == '2') choice.use_special = true;
+            else if (input == '3') choice.heal_ap = 5;
+            else if (input == '4') choice.defend_ap = 5;
+            CombatResult result = resolveCombatTurn(plr, mtr, ap, choice);
+            std::cout << result.log_message << std::endl;
+            if (result.monster_defeated) {
+                mtr = initMonster(currentDifficulty, plr.kills);
+            }
+            isRPGMode = false;
+            data = refresh(currentDifficulty);
+            data = playchoose('1');
         }
     } else {
         // Blockblast mode input handling
@@ -83,7 +87,8 @@ void Game::handleInput() {
         } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
             data = playwasd(input);
         } else if (input == 'c') {
-            data = playconfirm(currentDifficulty);
+            data = playconfirm();
+            ap += data.point;
         }
     }
 }

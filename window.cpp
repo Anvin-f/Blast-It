@@ -39,7 +39,7 @@ void drawBlocksWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t 
     screen.drawBox(x, y, width, height, " Blocks ");
 
     for (std::size_t i = 0; i < 3; ++i) {
-        if (blocks[i] == -1 ) {
+        if (blocks[i] < 0 ){
             continue;
         }
         std::string encodedRef = callblock(blocks[i]);
