@@ -32,5 +32,11 @@ private:
     bool isRPGMode = false;
     Player plr;
     Monster mtr;
-    int ap = 0;
+    int rpg_state = 0;
+    int current_attack_ap = 0;
+    bool current_use_special = false;
+    int current_heal_ap = 0;
+    int current_defend_ap = 0;
+    std::string current_status;
+    std::string current_input;
 };

@@ -35,7 +35,7 @@ Monster initMonster(int difficulty, int kills);
 
 int rollSpecialDamage(int base_attack);
 
-CombatResult resolveCombatTurn(Player & player, Monster & monster, int ap_available, const CombatChoice & choice);
+CombatResult resolveCombatTurn(Player & player, Monster & monster, const CombatChoice & choice);
 
 //saves
 void saveMonster(std::ostream & out, const Monster & m);

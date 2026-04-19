@@ -2,6 +2,9 @@
 #include "windows.h"
 #include "chooseblocks.h"
 #include "blocks.h"
+#include <sstream>
+#include <string>
+#include <limits>
 #ifdef _WIN32
 #include <conio.h>
 #endif
@@ -19,7 +22,6 @@ void Game::initialize() {
     std::fill(&data.table[0][0], &data.table[0][0] + 64, 0);
     plr = initPlayer(currentDifficulty);
     mtr = initMonster(currentDifficulty, 0);
-    ap = 0;
     std::cout << "Welcome to Blast-It!" << std::endl;
 }
 
@@ -56,40 +58,92 @@ void Game::handleInput() {
 
     if (!keyPressed) {return;}
 
-    if (!isRPGMode && data.lineid[0] == -1 && data.lineid[1] == -1 && data.lineid[2] == -1) {
-        isRPGMode = true;
-    }
-
     if (input == 'q' || input == 'Q') {
         running = false;
     }
+
     if (isRPGMode) {
         // RPG mode input handling
-        if (input == '1' || input == '2' || input == '3' || input == '4') {
-            CombatChoice choice = {};
-            if (input == '1') choice.attack_ap = 5;
-            else if (input == '2') choice.use_special = true;
-            else if (input == '3') choice.heal_ap = 5;
-            else if (input == '4') choice.defend_ap = 5;
-            CombatResult result = resolveCombatTurn(plr, mtr, ap, choice);
-            std::cout << result.log_message << std::endl;
-            if (result.monster_defeated) {
-                mtr = initMonster(currentDifficulty, plr.kills);
+        if (rpg_state == 0) {
+            current_input = "";
+            if (input == '1') {
+                rpg_state = 1;
+            } else if (input == '2') {
+                rpg_state = 2;
+            } else if (input == '3') {
+                rpg_state = 3;
+            } else if (input == '4') {
+                rpg_state = 4;
+            } else if (input == '\n' || input == '\r') {
+
+                int total = current_attack_ap + current_heal_ap + current_defend_ap;
+                CombatChoice choice = {current_attack_ap, current_use_special, current_heal_ap, current_defend_ap};
+                rpg_state = 0;
+                current_attack_ap = 0;
+                current_use_special = false;
+                current_heal_ap = 0;
+                current_defend_ap = 0;
+
+                if (total > plr.ap_reserve){return;}
+                CombatResult result = resolveCombatTurn(plr, mtr, choice);
+                std::cout << result.log_message << std::endl;
+                if (result.monster_defeated) {
+                    mtr = initMonster(currentDifficulty, plr.kills);
+                }
+                isRPGMode = false;
+                data = refresh(currentDifficulty);
+                data = playchoose('1');
             }
-            isRPGMode = false;
-            data = refresh(currentDifficulty);
-            data = playchoose('1');
+        }else{
+            if (rpg_state == 1 || rpg_state == 3 || rpg_state == 4) {
+                if (isdigit(input)) {
+                    current_input += input;
+                }
+            } else if (rpg_state == 2) {
+                if (input == '0' || input == '1') {
+                    current_input = input;
+                }
+            }
+            
+            if (input == '\n' || input == '\r') {
+                if (rpg_state == 1) {
+                    current_attack_ap = std::stoi(current_input);
+                } else if (rpg_state == 2) {
+                    current_use_special = (current_input == "1");
+                } else if (rpg_state == 3) {
+                    current_heal_ap = std::stoi(current_input);
+                } else if (rpg_state == 4) {
+                    current_defend_ap = std::stoi(current_input);
+                }
+                rpg_state = 0;
+            }
+        }
+        if (rpg_state == 0) {
+            current_status = "";
+        } else if (rpg_state == 1) {
+            current_status = "Enter AP for Attack: " + current_input;
+        } else if (rpg_state == 2) {
+            current_status = "Enable Special? (1=yes, 0=no): " + current_input;
+        } else if (rpg_state == 3) {
+            current_status = "Enter AP for Heal: " + current_input;
+        } else if (rpg_state == 4) {
+            current_status = "Enter AP for Defend: " + current_input;
         }
     } else {
+        current_status = "";
         // Blockblast mode input handling
         if (input == '1' || input == '2' || input == '3') {
             data = playchoose(input);
         } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
             data = playwasd(input);
-        } else if (input == 'c') {
+        } else if (input == '\n' || input == '\r') {
             data = playconfirm();
-            ap += data.point;
+            plr.ap_reserve += data.point;
+            if (data.lineid[0] == -1 && data.lineid[1] == -1 && data.lineid[2] == -1) {
+                isRPGMode = true;
+            }
         }
+        
     }
 }
 
@@ -112,8 +166,8 @@ void Game::render() {
     screen.drawText(0, 0, "Blast-It Game");
     screen.drawText(0, 1, "Press 'q' to quit");
 
-    drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight);
-    drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight);
+    drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty);
+    drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_attack_ap, current_use_special, current_heal_ap, current_defend_ap, current_status);
 
     const std::size_t gridOffsetX = leftPanelWidth + 2;
     const std::size_t gridOffsetY = headerHeight;

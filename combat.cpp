@@ -43,41 +43,38 @@ int rollSpecialDamage(int base_attack){
 }
 
 //resolves one combat turn and returns the outcome
-CombatResult resolveCombatTurn(Player & player, Monster & monster, int ap_available, const CombatChoice& choice){
+CombatResult resolveCombatTurn(Player & player, Monster & monster, const CombatChoice& choice){
     CombatResult r = {}; //initializes all members to zero
     std::ostringstream log;
 
-    int total_ap = ap_available + player.ap_reserve;
-    player.ap_reserve = 0;
-
     //Player attacks
-    if (choice.use_special && canUseSpecial(player) && total_ap >= SPECIAL_AP_COST) {
+    if (choice.use_special) {
         int dmg = rollSpecialDamage(player.base_attack);
         monster.hp -= dmg;
         if (monster.hp < 0){
             monster.hp = 0;
         }
         r.damage_dealt = dmg;
-        total_ap -= SPECIAL_AP_COST;
+        player.ap_reserve -= SPECIAL_AP_COST;
         log << "Special hits " << monster.name << " for " << dmg << ". ";
     }
     else if (choice.attack_ap > 0){
-        int spend = std::min(choice.attack_ap, total_ap);
+        int spend = choice.attack_ap;
         int dmg = player.base_attack + spend;
         monster.hp -= dmg;
         if (monster.hp < 0){
             monster.hp = 0;
         }
         r.damage_dealt = dmg;
-        total_ap -= spend;
+        player.ap_reserve -= spend;
         log << "Attack hits for " << dmg << ". ";
     }
 
     //Player heals
     if (choice.heal_ap > 0){
-        int spend = std::min(choice.heal_ap, total_ap);
+        int spend = choice.heal_ap;
         healPlayer(player, spend);
-        total_ap -= spend;
+        player.ap_reserve -= spend;
         log << "Healed " << spend << ". ";
     }
 
@@ -87,27 +84,25 @@ CombatResult resolveCombatTurn(Player & player, Monster & monster, int ap_availa
         r.bounty_earned = monster.bounty;
         ++player.kills;
         log << monster.name << " defeated! +" << monster.bounty << " bounty.";
-        player.ap_reserve = total_ap;
         r.log_message = log.str();
         return r;
     }
 
     //Monster attacks
-    int defend_spend = std::min(choice.defend_ap, total_ap);
+    int defend_spend = choice.defend_ap;
     int incoming = monster.attack - player.defense - defend_spend;
     if (incoming < 0){
         incoming = 0;
     }
     damagePlayer(player, incoming);
     r.damage_taken = incoming;
-    total_ap -= defend_spend;
+    player.ap_reserve -= defend_spend;
     log << monster.name << " attacks for " << incoming << ".";
 
     if (!isPlayerAlive(player)) {
         r.player_defeated = true;
         log << " You died.";
     }
-    player.ap_reserve = total_ap;
     r.log_message = log.str();
     return r;
 }
