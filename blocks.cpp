@@ -100,20 +100,22 @@ bool checkallinsert(int id) {
     return true;
 }
 
-Gamedata playconfirm(int difficulty) {
+Gamedata refresh(int difficulty) {
+    if(data.line) data.mutiplier++;
+    else data.mutiplier = 1;
+    data.line = false;
+    std::tuple<int, int, int> ids = chooseblocks(difficulty);
+    data.lineid[0] = std::get<0>(ids);
+    data.lineid[1] = std::get<1>(ids);
+    data.lineid[2] = std::get<2>(ids);
+    data.choosen = 0;
+    return data;
+}
+
+Gamedata playconfirm() {
     if(!checkinsert()) return data;
     insertblock();
     data.lineid[data.choosen] = -1;
-
-    if(std::max({data.lineid[0], data.lineid[1], data.lineid[2]}) == -1) {
-        if(data.line) data.mutiplier++;
-        else data.mutiplier = 1;
-        data.line = false;
-        std::tuple<int, int, int> ids = chooseblocks(difficulty);
-        data.lineid[0] = std::get<0>(ids);
-        data.lineid[1] = std::get<1>(ids);
-        data.lineid[2] = std::get<2>(ids);
-    }
 
     data.r = 0;
     data.c = 0;
@@ -123,16 +125,16 @@ Gamedata playconfirm(int difficulty) {
     else data.choosen = 2;
 
     data.gameover = 1;
-    data.gameover &= checkallinsert(data.lineid[0]);
-    data.gameover &= checkallinsert(data.lineid[1]);
-    data.gameover &= checkallinsert(data.lineid[2]);
-    
+    if(data.lineid[0] != -1) data.gameover &= checkallinsert(data.lineid[0]);
+    if(data.lineid[1] != -1) data.gameover &= checkallinsert(data.lineid[1]);
+    if(data.lineid[2] != -1) data.gameover &= checkallinsert(data.lineid[2]);
+
     return data;
 }
 
 Gamedata playchoose(char s) {
     // change the block wanted to be inserted
-    int x = s-'0';
+    int x = s-'0'-1;
     if(data.lineid[x] != -1) {
         data.choosen = x - 1;
         // ensure that the hovered block is in the grid
