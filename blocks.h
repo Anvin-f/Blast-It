@@ -3,9 +3,10 @@
 #include <vector>
 #include <fstream>
 
-bool checkinsert();
-void hoverblock(int id);
-void insertblock();
+bool checkinsert(Gamedata data);
+void hoverblock(Gamedata &data);
+void insertblock(Gamedata &data);
+pair<int, int> checkallinsert(Gamedata data, int c);
 Gamedata refresh(int difficulty);
 Gamedata playconfirm();
 Gamedata playchoose(char s);
