@@ -67,15 +67,23 @@ void Game::handleInput() {
     }
 #endif
 
-    if (keyPressed) {
-        if (input == 'q' || input == 'Q') {
-            running = false;
-        } else if (input == '1' || input == '2' || input == '3') {
+    if (!keyPressed) {return;}
+    if (input == 'q' || input == 'Q') {
+        running = false;
+    }
+    if (isRPGMode) {
+        // RPG mode input handling
+        if (input == '1' || input == '2' || input == '3' || input == '4') {
+            // data = resolveCombatTurn(plr, mtr, ap, input);
+        }
+    } else {
+        // Blockblast mode input handling
+        if (input == '1' || input == '2' || input == '3') {
             data = playchoose(input);
         } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
             data = playwasd(input);
         } else if (input == 'c') {
-            data = playconfirm(1);
+            data = playconfirm(currentDifficulty);
         }
     }
 }
