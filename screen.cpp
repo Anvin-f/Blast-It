@@ -1,6 +1,7 @@
 #include "screen.h"
 #include <algorithm>
 #include <iostream>
+#include <sstream> 
 
 Screen::Screen(std::size_t width, std::size_t height)
     : width_(width)
@@ -81,4 +82,15 @@ std::size_t Screen::width() const {
 
 std::size_t Screen::height() const {
     return height_;
+}
+
+void Screen::drawAsciiArt(std::size_t x, std::size_t y, const std::string& art) {
+    std::stringstream ss(art);
+    std::string line;
+    std::size_t row = 0;
+
+    while (std::getline(ss, line)) {
+        drawText(x, y + row, line);
+        row++;
+    }
 }
