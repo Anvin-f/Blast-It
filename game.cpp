@@ -28,7 +28,6 @@ void Game::initialize() {
 void Game::run() {
     while (isRunning()) {
         handleInput();
-        update(0.0f);
         render();
 
         // Simple frame rate control
@@ -44,6 +43,37 @@ void Game::playerLost() {
     std::cout << "Game Over! You have been defeated." << std::endl;
     running = false;
     return;
+}
+
+
+void Game::startBlastMode() {
+    int total = current_attack_ap + current_heal_ap + current_defend_ap;
+    CombatChoice choice = {current_attack_ap, current_use_special, current_heal_ap, current_defend_ap};
+    rpg_state = 0;
+    current_attack_ap = 0;
+    current_use_special = false;
+    current_heal_ap = 0;
+    current_defend_ap = 0;
+
+    if (total > plr.ap_reserve){return;}
+    CombatResult result = resolveCombatTurn(plr, mtr, choice);
+    if (result.monster_defeated) {
+        mtr = initMonster(currentDifficulty, plr.kills);
+    }
+    if (result.player_defeated) {
+        playerLost();
+        return;
+    }
+    isRPGMode = false;
+    data = refresh(currentDifficulty);
+    data = playchoose('1');
+}
+
+void Game::startRPGMode() {
+    isRPGMode = true;
+    if(plr.ap_reserve == 0){
+        startBlastMode();
+    }
 }
 
 void Game::handleInput() {
@@ -81,27 +111,7 @@ void Game::handleInput() {
             } else if (input == '4') {
                 rpg_state = 4;
             } else if (input == '\n' || input == '\r') {
-
-                int total = current_attack_ap + current_heal_ap + current_defend_ap;
-                CombatChoice choice = {current_attack_ap, current_use_special, current_heal_ap, current_defend_ap};
-                rpg_state = 0;
-                current_attack_ap = 0;
-                current_use_special = false;
-                current_heal_ap = 0;
-                current_defend_ap = 0;
-
-                if (total > plr.ap_reserve){return;}
-                CombatResult result = resolveCombatTurn(plr, mtr, choice);
-                if (result.monster_defeated) {
-                    mtr = initMonster(currentDifficulty, plr.kills);
-                }
-                if (result.player_defeated) {
-                    playerLost();
-                    return;
-                }
-                isRPGMode = false;
-                data = refresh(currentDifficulty);
-                data = playchoose('1');
+                startBlastMode();
             }
         }else{
             if (rpg_state == 1 || rpg_state == 3 || rpg_state == 4) {
@@ -149,19 +159,13 @@ void Game::handleInput() {
             data = playconfirm();
             plr.ap_reserve += data.point;
             if (data.gameover) {
-                isRPGMode = true;
+                startRPGMode();
             }
         }
         //if (lostinblockblast) {playerLost();return;}
     }
 }
 
-void Game::update(float deltaTime) {
-    (void)deltaTime;
-    // Update game logic here
-    // For now, just print delta time
-    // std::cout << "Delta time: " << deltaTime << std::endl;
-}
 
 void Game::render() {
     screen.clear(' ');

@@ -19,9 +19,10 @@ public:
     void run();
     bool isRunning() const;
     void handleInput();
-    void update(float deltaTime);
     void render();
     void playerLost();
+    void startBlastMode();
+    void startRPGMode();
 
 private:
 
