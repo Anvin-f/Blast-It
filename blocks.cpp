@@ -101,6 +101,7 @@ bool checkallinsert(int id) {
 }
 
 Gamedata refresh(int difficulty) {
+    data.gameover = 0;
     if(data.line) data.mutiplier++;
     else data.mutiplier = 1;
     data.line = false;
