@@ -1,7 +1,7 @@
 #include "game.h"
 #include "windows.h"
 #include "chooseblocks.h"
-#include "blocks.h"
+#include "blockplay.h"
 #include <sstream>
 #include <string>
 #include <limits>

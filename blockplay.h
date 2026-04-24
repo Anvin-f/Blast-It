@@ -1,15 +1,12 @@
-#include "gamedata.h"
-#include <cstddef>
-#include <vector>
-#include <fstream>
+#ifndef BLOCKPLAY_H
+#define BLOCKPLAY_H
 
-bool checkinsert();
-void hoverblock(int id);
-void insertblock();
+#include "gamedata.h"
+
 Gamedata refresh(int difficulty);
 Gamedata playconfirm();
 Gamedata playchoose(char s);
 Gamedata playwasd(char s);
 Gamedata blockInit(int difficulty);
 
-
+#endif
