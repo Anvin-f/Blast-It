@@ -149,8 +149,8 @@ void Game::handleInput() {
             current_status = "Enter AP for Defend: " + current_input;
         }
     } else {
+        // Blast mode input handling
         current_status = "";
-        // Blockblast mode input handling
         if (input == '1' || input == '2' || input == '3') {
             data = playchoose(input);
         } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {

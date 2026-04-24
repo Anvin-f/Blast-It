@@ -10,6 +10,7 @@
 Gamedata data;
 
 Gamedata refresh(int difficulty) {
+    data.gameover = false;
     if(data.line) data.mutiplier++;
     else data.mutiplier = 1;
     data.line = false;
