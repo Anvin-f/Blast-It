@@ -10,6 +10,7 @@
 Gamedata data;
 
 Gamedata refresh(int difficulty) {
+    // when all 3 blocks are put then refresh the block and calculate the point
     data.gameover = false;
     if(data.line) data.mutiplier++;
     else data.mutiplier = 1;
@@ -23,6 +24,8 @@ Gamedata refresh(int difficulty) {
 }
 
 Gamedata playconfirm() {
+    //put the block at the current position and calculate the point
+    //if the block cannot be put, ignore the input
     if(!checkinsert(data)) return data;
     insertblock(data);
     data.lineid[data.choosen] = -1;
@@ -34,6 +37,7 @@ Gamedata playconfirm() {
     else if(data.lineid[1] != -1) data.choosen = 1;
     else data.choosen = 2;
 
+    // check if the game is over
     data.gameover = max({datalineid[0], data.lineid[1], data.lineid[2]}) != -1;
     std::pair<int, int> compared = {-1, -1};
     if(data.lineid[0] != -1) data.gameover &= (checkallinsert(data, 0) == compared);

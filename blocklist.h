@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+// list of block available, '#' means the block is occupied, '/' means the end of a row
 const std::string blocklist[] = {
     "#",
     "##",

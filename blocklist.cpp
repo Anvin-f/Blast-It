@@ -4,10 +4,12 @@
 #include <vector>
 
 std::string callblock(int id) {
+    // return the block string according to the id
     return blocklist[id];
 }
 
 std::pair<int, int> dimension(int id) {
+    // calculate the dimension of the block according to the id
     std::string s = callblock(id);
     int n = s.size();
     int r = 1;
