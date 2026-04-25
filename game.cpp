@@ -76,6 +76,31 @@ void Game::startRPGMode() {
     }
 }
 
+void Game::saveData() {
+    // Saving game data
+    std::ofstream outFile("savegame.dat", std::ios::binary);
+    if (outFile) {
+        outFile.write(reinterpret_cast<char*>(&plr), sizeof(plr));
+        outFile.write(reinterpret_cast<char*>(&mtr), sizeof(mtr));
+        outFile.write(reinterpret_cast<char*>(&data), sizeof(data));
+        std::cout << "Game saved successfully!" << std::endl;
+    } else {
+        std::cerr << "Error saving game!" << std::endl;
+    }
+}
+
+void Game::loadData() {
+    // Loading game data
+    std::ifstream inFile("savegame.dat", std::ios::binary);
+    if (inFile) {
+        inFile.read(reinterpret_cast<char*>(&plr), sizeof(plr));
+        inFile.read(reinterpret_cast<char*>(&mtr), sizeof(mtr));
+        inFile.read(reinterpret_cast<char*>(&data), sizeof(data));
+        std::cout << "Game loaded successfully!" << std::endl;
+    } else {
+        std::cerr << "Error loading game!" << std::endl;
+    }
+}
 void Game::handleInput() {
     bool keyPressed = false;
     char input = 0;
@@ -93,76 +118,88 @@ void Game::handleInput() {
 #endif
 
     if (!keyPressed) {return;}
+    if (current_page == 0 ){
+        if (input == '1') {
+            saveData();
+        } else if (input == '2') {
+            loadData();
+        } else if (input == '3') {
+            running = false;
+            return;
+        }
+    }else{
+        if (input == 'q' || input == 'Q') {
+            current_page = 0;
+            return;
+        }
 
-    if (input == 'q' || input == 'Q') {
-        running = false;
-    }
-
-    if (isRPGMode) {
-        // RPG mode input handling
-        if (rpg_state == 0) {
-            current_input = "";
-            if (input == '1') {
-                rpg_state = 1;
-            } else if (input == '2') {
-                rpg_state = 2;
-            } else if (input == '3') {
-                rpg_state = 3;
-            } else if (input == '4') {
-                rpg_state = 4;
-            } else if (input == '\n' || input == '\r') {
-                startBlastMode();
-            }
-        }else{
-            if (rpg_state == 1 || rpg_state == 3 || rpg_state == 4) {
-                if (isdigit(input)) {
-                    current_input += input;
+        if (isRPGMode) {
+            // RPG mode input handling
+            if (rpg_state == 0) {
+                current_input = "";
+                if (input == '1') {
+                    rpg_state = 1;
+                } else if (input == '2') {
+                    rpg_state = 2;
+                } else if (input == '3') {
+                    rpg_state = 3;
+                } else if (input == '4') {
+                    rpg_state = 4;
+                } else if (input == '\n' || input == '\r') {
+                    startBlastMode();
                 }
-            } else if (rpg_state == 2) {
-                if (input == '0' || input == '1') {
-                    current_input = input;
-                }
-            }
-            
-            if (input == '\n' || input == '\r') {
-                if (rpg_state == 1) {
-                    current_attack_ap = std::stoi(current_input);
+            }else{
+                if (rpg_state == 1 || rpg_state == 3 || rpg_state == 4) {
+                    if (isdigit(input)) {
+                        current_input += input;
+                    }
                 } else if (rpg_state == 2) {
-                    current_use_special = (current_input == "1");
-                } else if (rpg_state == 3) {
-                    current_heal_ap = std::stoi(current_input);
-                } else if (rpg_state == 4) {
-                    current_defend_ap = std::stoi(current_input);
+                    if (input == '0' || input == '1') {
+                        current_input = input;
+                    }
                 }
-                rpg_state = 0;
+                
+                if (input == '\n' || input == '\r') {
+                    if (rpg_state == 1) {
+                        current_attack_ap = std::stoi(current_input);
+                    } else if (rpg_state == 2) {
+                        current_use_special = (current_input == "1");
+                    } else if (rpg_state == 3) {
+                        current_heal_ap = std::stoi(current_input);
+                    } else if (rpg_state == 4) {
+                        current_defend_ap = std::stoi(current_input);
+                    }
+                    rpg_state = 0;
+                }
             }
-        }
-        if (rpg_state == 0) {
+            if (rpg_state == 0) {
+                current_status = "";
+            } else if (rpg_state == 1) {
+                current_status = "Enter AP for Attack: " + current_input;
+            } else if (rpg_state == 2) {
+                current_status = "Enable Special? (1=yes, 0=no): " + current_input;
+            } else if (rpg_state == 3) {
+                current_status = "Enter AP for Heal: " + current_input;
+            } else if (rpg_state == 4) {
+                current_status = "Enter AP for Defend: " + current_input;
+            }
+        } else {
+            // Blast mode input handling
             current_status = "";
-        } else if (rpg_state == 1) {
-            current_status = "Enter AP for Attack: " + current_input;
-        } else if (rpg_state == 2) {
-            current_status = "Enable Special? (1=yes, 0=no): " + current_input;
-        } else if (rpg_state == 3) {
-            current_status = "Enter AP for Heal: " + current_input;
-        } else if (rpg_state == 4) {
-            current_status = "Enter AP for Defend: " + current_input;
-        }
-    } else {
-        // Blast mode input handling
-        current_status = "";
-        if (input == '1' || input == '2' || input == '3') {
-            data = playchoose(input);
-        } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
-            data = playwasd(input);
-        } else if (input == '\n' || input == '\r') {
-            data = playconfirm();
-            plr.ap_reserve += data.point;
-            if (data.gameover) {
-                startRPGMode();
+            if (input == '1' || input == '2' || input == '3') {
+                data = playchoose(input);
+            } else if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
+                data = playwasd(input);
+            } else if (input == '\n' || input == '\r') {
+                data = playconfirm();
+                plr.ap_reserve += data.point;
+                if (data.lineid[0] == -1 && data.lineid[1] == -1 && data.lineid[2] == -1) {
+                    startRPGMode();
+                }
             }
+            //if (lostinblockblast) {playerLost();return;}
         }
-        //if (lostinblockblast) {playerLost();return;}
+
     }
 }
 
