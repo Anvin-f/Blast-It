@@ -121,10 +121,13 @@ void Game::handleInput() {
     if (current_page == 0 ){
         if (input == '1') {
             saveData();
+            current_page = 1;
         } else if (input == '2') {
             loadData();
+            current_page = 1;
         } else if (input == '3') {
             running = false;
+            current_page = 1;
             return;
         }
     }else{
@@ -213,17 +216,25 @@ void Game::render() {
     const std::size_t topPanelHeight = availableHeight * 2 / 3;
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
 
-    screen.drawText(0, 0, "Blast-It Game");
-    screen.drawText(0, 1, "Press 'q' to quit");
+    if (current_page == 0) {
+        screen.drawText(0, 0, "Blast-It Game");
+        screen.drawText(0, 1, "1. Save Game");
+        screen.drawText(0, 2, "2. Load Game");
+        screen.drawText(0, 3, "3. Quit");
+        screen.present();
+    }else{
+        screen.drawText(0, 0, "Blast-It Game");
+        screen.drawText(0, 1, "Press 'q' to quit");
 
-    drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty);
-    drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_attack_ap, current_use_special, current_heal_ap, current_defend_ap, current_status);
+        drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty);
+        drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_attack_ap, current_use_special, current_heal_ap, current_defend_ap, current_status);
 
-    const std::size_t gridOffsetX = leftPanelWidth + 2;
-    const std::size_t gridOffsetY = headerHeight;
-    drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight, data.table);
+        const std::size_t gridOffsetX = leftPanelWidth + 2;
+        const std::size_t gridOffsetY = headerHeight;
+        drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight, data.table);
 
-    drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
+        drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
 
-    screen.present();
+        screen.present();
+    }
 }
