@@ -23,7 +23,9 @@ public:
     void playerLost();
     void startBlastMode();
     void startRPGMode();
-
+    void saveData();
+    void loadData();
+    
 private:
 
     bool running;
@@ -40,5 +42,6 @@ private:
     int current_heal_ap = 0;
     int current_defend_ap = 0;
     std::string current_status;
+    int current_page = 0;
     std::string current_input;
 };
