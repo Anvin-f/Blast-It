@@ -1,3 +1,4 @@
+#include <fstream>
 #include "game.h"
 #include "windows.h"
 #include "chooseblocks.h"
@@ -226,7 +227,7 @@ void Game::render() {
         screen.drawText(0, 0, "Blast-It Game");
         screen.drawText(0, 1, "Press 'q' to quit");
 
-        drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty);
+        drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty, plr.kills);
         drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_attack_ap, current_use_special, current_heal_ap, current_defend_ap, current_status);
 
         const std::size_t gridOffsetX = leftPanelWidth + 2;

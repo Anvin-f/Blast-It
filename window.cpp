@@ -13,7 +13,7 @@ void drawGridWindow(Screen& screen, const Grid& grid, std::size_t x, std::size_t
     grid.draw(screen, x, y, table);
 }
 
-void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const Monster& monster, int difficulty) {
+void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t width, std::size_t height, const Monster& monster, int difficulty, int kills) {
     screen.drawBox(x, y, width, height, " Enemy ");
     if (width > 4 && height > 2) {
         screen.drawText(x + 2, y + 1, "Name: " + monster.name);
@@ -21,10 +21,11 @@ void drawEnemyWindow(Screen& screen, std::size_t x, std::size_t y, std::size_t w
         screen.drawText(x + 2, y + 3, "ATK: " + std::to_string(monster.attack));
         screen.drawText(x + 2, y + 4, "Diff: " + std::to_string(difficulty));
     }
-    if (EnemyArtMap[monster.name].empty()) {
+    const std::string& art = getEnemyArt(monster.name, kills);
+    if (art.empty()) {
         screen.drawText(x + 2, y + 6, "No art available");
     } else {
-        screen.drawAsciiArt(x + 15, y + 3, EnemyArtMap[monster.name]);
+        screen.drawAsciiArt(x + 15, y + 3, art);
     }
 
 }
