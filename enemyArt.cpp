@@ -121,14 +121,14 @@ const std::string dragon_t2 =
 
 const std::string empty_string = "";
 
-const std::string& pickTier(const std::string& t0,
-                            const std::string& t1,
-                            const std::string& t2,
-                            int kills) {
+// returns the appropriate art depending on the current number of kills, more kills mean bigger monsters
+const std::string& pickTier(const std::string& t0, const std::string& t1, const std::string& t2, int kills) {
     if (kills < 3) return t0;
     if (kills < 7) return t1;
     return t2;
 }
+
+//calls and returns pickTier based on the type of monster the user is fighting
 const std::string& getEnemyArt(const std::string& name, int kills) {
     if (name == "Goblin")
       return pickTier(goblin_t0, goblin_t1, goblin_t2, kills);
