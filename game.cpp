@@ -119,6 +119,10 @@ void Game::handleInput() {
 #endif
 
     if (!keyPressed) {return;}
+    if (input == 'q' || input == 'Q') {
+        current_page = 0;
+        return;
+    }
     if (current_page == 0 ){
         if (input == '3') {
             saveData();
@@ -145,10 +149,6 @@ void Game::handleInput() {
         initialize();
         current_page = 1;
     }else{
-        if (input == 'q' || input == 'Q') {
-            current_page = 0;
-            return;
-        }
 
         if (isRPGMode) {
             // RPG mode input handling
@@ -230,13 +230,23 @@ void Game::render() {
     const std::size_t topPanelHeight = availableHeight * 2 / 3;
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
     
-    screen.drawText(0, 0, "Blast-It");
     if (current_page == 0) {
-        screen.drawText(0, 1, "1. New Game");
-        screen.drawText(0, 2, "2. Load Game");
-        screen.drawText(0, 3, "3. Save Game");
-        screen.drawText(0, 4, "4. Quit");
-        screen.present();
+        screen.drawAsciiArt(3, 3,R"(
+******   **           **      ******** **********       ** **********
+/*////** /**          ****    **////// /////**///       /**/////**/// 
+/*   /** /**         **//**  /**           /**          /**    /**    
+/******  /**        **  //** /*********    /**          /**    /**    
+/*//// **/**       **********////////**    /**          /**    /**    
+/*    /**/**      /**//////**       /**    /**          /**    /**    
+/******* /********/**     /** ********     /**          /**    /**    
+///////  //////// //      // ////////      //           //     // 
+
+                            1. New Game
+                           2.  Load Game
+                           3.  Save Game
+                             4.  Quit
+
+)");
     }else if (current_page == 1) {
         screen.drawText(0, 1, "Press 'q' to quit");
 
@@ -249,12 +259,23 @@ void Game::render() {
 
         drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
 
-        screen.present();
     } else if (current_page == 2) {
-        screen.drawText(0, 0, "Choose difficulty:");
-        screen.drawText(0, 1, "1. Easy");
-        screen.drawText(0, 2, "2. Medium");
-        screen.drawText(0, 3, "3. Hard");
-        screen.present();
+                screen.drawAsciiArt(3, 3,R"(
+******   **           **      ******** **********       ** **********
+/*////** /**          ****    **////// /////**///       /**/////**/// 
+/*   /** /**         **//**  /**           /**          /**    /**    
+/******  /**        **  //** /*********    /**          /**    /**    
+/*//// **/**       **********////////**    /**          /**    /**    
+/*    /**/**      /**//////**       /**    /**          /**    /**    
+/******* /********/**     /** ********     /**          /**    /**    
+///////  //////// //      // ////////      //           //     // 
+
+                       Choose Difficulty
+                            1. Easy
+                           2. Medium
+                            3. Hard
+
+)");
     }
+    screen.present();
 }
