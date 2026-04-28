@@ -187,7 +187,7 @@ void Game::handleInput() {
                     startRPGMode();
                 }
             }
-            //if (lostinblockblast) {playerLost();return;}
+            if (data.gameover) {playerLost();return;}
         }
 
     }
