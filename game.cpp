@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include "game.h"
 #include "windows.h"
 #include "chooseblocks.h"
@@ -71,23 +72,67 @@ void Game::startRPGMode() {
 }
 
 void Game::saveData() {
-    // Saving game data
+    // Saving game data to binary file
     std::ofstream outFile("savegame.dat", std::ios::binary);
-    if (outFile) {
-        outFile.write(reinterpret_cast<char*>(&plr), sizeof(plr));
-        outFile.write(reinterpret_cast<char*>(&mtr), sizeof(mtr));
-        outFile.write(reinterpret_cast<char*>(&data), sizeof(data));
+    if (!outFile) {
+        std::cerr << "Error: Could not open savegame.dat for writing." << std::endl;
+        return;
     }
+    
+    // Save player data
+    savePlayer(outFile, plr);
+    if (!outFile) {
+        std::cerr << "Error: Failed to save player data." << std::endl;
+        return;
+    }
+    
+    // Save monster data
+    saveMonster(outFile, mtr);
+    if (!outFile) {
+        std::cerr << "Error: Failed to save monster data." << std::endl;
+        return;
+    }
+    
+    // Save game data
+    outFile.write(reinterpret_cast<const char*>(&data), sizeof(data));
+    if (!outFile) {
+        std::cerr << "Error: Failed to save game data." << std::endl;
+        return;
+    }
+    
+    outFile.close();
 }
 
 void Game::loadData() {
-    // Loading game data
+    // Loading game data from binary file
     std::ifstream inFile("savegame.dat", std::ios::binary);
-    if (inFile) {
-        inFile.read(reinterpret_cast<char*>(&plr), sizeof(plr));
-        inFile.read(reinterpret_cast<char*>(&mtr), sizeof(mtr));
-        inFile.read(reinterpret_cast<char*>(&data), sizeof(data));
+    if (!inFile) {
+        std::cerr << "Error: Could not open savegame.dat for reading." << std::endl;
+        return;
     }
+    
+    // Load player data
+    loadPlayer(inFile, plr);
+    if (!inFile) {
+        std::cerr << "Error: Failed to load player data." << std::endl;
+        return;
+    }
+    
+    // Load monster data
+    loadMonster(inFile, mtr);
+    if (!inFile) {
+        std::cerr << "Error: Failed to load monster data." << std::endl;
+        return;
+    }
+    
+    // Load game data
+    inFile.read(reinterpret_cast<char*>(&data), sizeof(data));
+    if (!inFile) {
+        std::cerr << "Error: Failed to load game data." << std::endl;
+        return;
+    }
+    
+    inFile.close();
 }
 void Game::handleInput() {
     bool keyPressed = false;
@@ -173,6 +218,7 @@ void Game::handleInput() {
                 }
             }
             current_status = rpg_state_map[rpg_state] + (rpg_state? current_input : "");
+            if (plr.hp<= 0) {playerLost();return;}
         } else {
             // Blast mode input handling
             current_status = "";

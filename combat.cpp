@@ -106,3 +106,35 @@ CombatResult resolveCombatTurn(Player & player, Monster & monster, const CombatC
     r.log_message = log.str();
     return r;
 }
+
+//saves monster data to output stream
+void saveMonster(std::ostream & out, const Monster & m){
+    //save the string name
+    size_t nameLen = m.name.length();
+    out.write(reinterpret_cast<const char*>(&nameLen), sizeof(nameLen));
+    out.write(m.name.c_str(), nameLen);
+    
+    //save numeric fields
+    out.write(reinterpret_cast<const char*>(&m.hp), sizeof(m.hp));
+    out.write(reinterpret_cast<const char*>(&m.max_hp), sizeof(m.max_hp));
+    out.write(reinterpret_cast<const char*>(&m.attack), sizeof(m.attack));
+    out.write(reinterpret_cast<const char*>(&m.bounty), sizeof(m.bounty));
+}
+
+//loads monster data from input stream
+void loadMonster(std::istream & in, Monster & m){
+    //load the string name
+    size_t nameLen = 0;
+    in.read(reinterpret_cast<char*>(&nameLen), sizeof(nameLen));
+    char* buffer = new char[nameLen + 1];
+    in.read(buffer, nameLen);
+    buffer[nameLen] = '\0';
+    m.name = std::string(buffer);
+    delete[] buffer;
+    
+    //load numeric fields
+    in.read(reinterpret_cast<char*>(&m.hp), sizeof(m.hp));
+    in.read(reinterpret_cast<char*>(&m.max_hp), sizeof(m.max_hp));
+    in.read(reinterpret_cast<char*>(&m.attack), sizeof(m.attack));
+    in.read(reinterpret_cast<char*>(&m.bounty), sizeof(m.bounty));
+}
