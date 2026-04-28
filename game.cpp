@@ -248,6 +248,7 @@ void Game::render() {
 
 )");
     }else if (current_page == 1) {
+        screen.drawText(0, 0, "Blast-It!");
         screen.drawText(0, 1, "Press 'q' to quit");
 
         drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty, plr.kills);
