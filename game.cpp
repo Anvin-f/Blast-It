@@ -120,17 +120,30 @@ void Game::handleInput() {
 
     if (!keyPressed) {return;}
     if (current_page == 0 ){
-        if (input == '1') {
+        if (input == '3') {
             saveData();
             current_page = 1;
         } else if (input == '2') {
             loadData();
             current_page = 1;
-        } else if (input == '3') {
+        } else if (input == '4') {
             running = false;
-            current_page = 1;
+            return;
+        }else if (input == '1') {
+            current_page = 2;
+        }
+    }else if (current_page == 2) {
+        if (input == '1') {
+            currentDifficulty = 1;
+        } else if (input == '2') {
+            currentDifficulty = 2;
+        } else if (input == '3') {
+            currentDifficulty = 3;
+        } else {
             return;
         }
+        initialize();
+        current_page = 1;
     }else{
         if (input == 'q' || input == 'Q') {
             current_page = 0;
@@ -216,15 +229,15 @@ void Game::render() {
     const std::size_t availableHeight = screen.height() - headerHeight;
     const std::size_t topPanelHeight = availableHeight * 2 / 3;
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
-
+    
+    screen.drawText(0, 0, "Blast-It");
     if (current_page == 0) {
-        screen.drawText(0, 0, "Blast-It Game");
-        screen.drawText(0, 1, "1. Save Game");
+        screen.drawText(0, 1, "1. New Game");
         screen.drawText(0, 2, "2. Load Game");
-        screen.drawText(0, 3, "3. Quit");
+        screen.drawText(0, 3, "3. Save Game");
+        screen.drawText(0, 4, "4. Quit");
         screen.present();
-    }else{
-        screen.drawText(0, 0, "Blast-It Game");
+    }else if (current_page == 1) {
         screen.drawText(0, 1, "Press 'q' to quit");
 
         drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty, plr.kills);
@@ -236,6 +249,12 @@ void Game::render() {
 
         drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
 
+        screen.present();
+    } else if (current_page == 2) {
+        screen.drawText(0, 0, "Choose difficulty:");
+        screen.drawText(0, 1, "1. Easy");
+        screen.drawText(0, 2, "2. Medium");
+        screen.drawText(0, 3, "3. Hard");
         screen.present();
     }
 }
