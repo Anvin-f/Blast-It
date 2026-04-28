@@ -16,6 +16,7 @@ Game::Game() : running(false), screen(85, 30), grid(8, 8, 3, 1) {
 Game::~Game() {
 }
 
+//initialize a new game
 void Game::initialize() {
     running = true;
     data = blockInit(currentDifficulty);
@@ -23,16 +24,12 @@ void Game::initialize() {
     std::fill(&data.table[0][0], &data.table[0][0] + 64, 0);
     plr = initPlayer(currentDifficulty);
     mtr = initMonster(currentDifficulty, 0);
-    std::cout << "Welcome to Blast-It!" << std::endl;
 }
 
 void Game::run() {
     while (isRunning()) {
         handleInput();
         render();
-
-        // Simple frame rate control
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
@@ -41,23 +38,17 @@ bool Game::isRunning() const {
 }
 
 void Game::playerLost() {
-    std::cout << "Game Over! You have been defeated." << std::endl;
     running = false;
     return;
 }
 
 
 void Game::startBlastMode() {
-    int total = current_attack_ap + current_heal_ap + current_defend_ap;
-    CombatChoice choice = {current_attack_ap, current_use_special, current_heal_ap, current_defend_ap};
+    int total = current_choice.attack_ap + current_choice.heal_ap + current_choice.defend_ap + (current_choice.use_special ? 20 : 0);
     rpg_state = 0;
-    current_attack_ap = 0;
-    current_use_special = false;
-    current_heal_ap = 0;
-    current_defend_ap = 0;
 
-    if (total > plr.ap_reserve){return;}
-    CombatResult result = resolveCombatTurn(plr, mtr, choice);
+    if (total > plr.ap_reserve){current_choice = {0, false, 0, 0};return;}
+    CombatResult result = resolveCombatTurn(plr, mtr, current_choice);
     if (result.monster_defeated) {
         mtr = initMonster(currentDifficulty, plr.kills);
     }
@@ -65,14 +56,16 @@ void Game::startBlastMode() {
         playerLost();
         return;
     }
-    isRPGMode = false;
+    current_choice = {0, false, 0, 0};
+    isRPGMode = false; //gamemode switch
     data = refresh(currentDifficulty);
-    data = playchoose('1');
+    data = playchoose('1'); // '1' is the default block
 }
 
 void Game::startRPGMode() {
-    isRPGMode = true;
+    isRPGMode = true; //gamemode switch
     if(plr.ap_reserve == 0){
+        //skip combat if player has no AP
         startBlastMode();
     }
 }
@@ -84,9 +77,6 @@ void Game::saveData() {
         outFile.write(reinterpret_cast<char*>(&plr), sizeof(plr));
         outFile.write(reinterpret_cast<char*>(&mtr), sizeof(mtr));
         outFile.write(reinterpret_cast<char*>(&data), sizeof(data));
-        std::cout << "Game saved successfully!" << std::endl;
-    } else {
-        std::cerr << "Error saving game!" << std::endl;
     }
 }
 
@@ -97,9 +87,6 @@ void Game::loadData() {
         inFile.read(reinterpret_cast<char*>(&plr), sizeof(plr));
         inFile.read(reinterpret_cast<char*>(&mtr), sizeof(mtr));
         inFile.read(reinterpret_cast<char*>(&data), sizeof(data));
-        std::cout << "Game loaded successfully!" << std::endl;
-    } else {
-        std::cerr << "Error loading game!" << std::endl;
     }
 }
 void Game::handleInput() {
@@ -137,18 +124,14 @@ void Game::handleInput() {
             current_page = 2;
         }
     }else if (current_page == 2) {
-        if (input == '1') {
-            currentDifficulty = 1;
-        } else if (input == '2') {
-            currentDifficulty = 2;
-        } else if (input == '3') {
-            currentDifficulty = 3;
+        if (input == '1' || input == '2' || input == '3') {
+            currentDifficulty = std::stoi(std::string(1, input));
         } else {
             return;
         }
         initialize();
         current_page = 1;
-    }else{
+    }else if (current_page == 1) {
 
         if (isRPGMode) {
             // RPG mode input handling
@@ -178,28 +161,18 @@ void Game::handleInput() {
                 
                 if (input == '\n' || input == '\r') {
                     if (rpg_state == 1) {
-                        current_attack_ap = std::stoi(current_input);
+                        current_choice.attack_ap = std::stoi(current_input);
                     } else if (rpg_state == 2) {
-                        current_use_special = (current_input == "1");
+                        current_choice.use_special = (current_input == "1");
                     } else if (rpg_state == 3) {
-                        current_heal_ap = std::stoi(current_input);
+                        current_choice.heal_ap = std::stoi(current_input);
                     } else if (rpg_state == 4) {
-                        current_defend_ap = std::stoi(current_input);
+                        current_choice.defend_ap = std::stoi(current_input);
                     }
                     rpg_state = 0;
                 }
             }
-            if (rpg_state == 0) {
-                current_status = "";
-            } else if (rpg_state == 1) {
-                current_status = "Enter AP for Attack: " + current_input;
-            } else if (rpg_state == 2) {
-                current_status = "Enable Special? (1=yes, 0=no): " + current_input;
-            } else if (rpg_state == 3) {
-                current_status = "Enter AP for Heal: " + current_input;
-            } else if (rpg_state == 4) {
-                current_status = "Enter AP for Defend: " + current_input;
-            }
+            current_status = rpg_state_map[rpg_state] + (rpg_state? current_input : "");
         } else {
             // Blast mode input handling
             current_status = "";
@@ -231,52 +204,30 @@ void Game::render() {
     const std::size_t bottomPanelHeight = availableHeight - topPanelHeight;
     
     if (current_page == 0) {
-        screen.drawAsciiArt(3, 3,R"(
-******   **           **      ******** **********       ** **********
-/*////** /**          ****    **////// /////**///       /**/////**/// 
-/*   /** /**         **//**  /**           /**          /**    /**    
-/******  /**        **  //** /*********    /**          /**    /**    
-/*//// **/**       **********////////**    /**          /**    /**    
-/*    /**/**      /**//////**       /**    /**          /**    /**    
-/******* /********/**     /** ********     /**          /**    /**    
-///////  //////// //      // ////////      //           //     // 
+        screen.drawAsciiArt(3, 3,logo + R"(
 
                             1. New Game
                            2.  Load Game
                            3.  Save Game
-                             4.  Quit
-
-)");
+                             4.  Quit)");
     }else if (current_page == 1) {
         screen.drawText(0, 0, "Blast-It!");
         screen.drawText(0, 1, "Press 'q' to quit");
 
-        drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr.difficulty, plr.kills);
-        drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_attack_ap, current_use_special, current_heal_ap, current_defend_ap, current_status);
+        drawEnemyWindow(screen, 0, headerHeight, leftPanelWidth, topPanelHeight, mtr, plr);
+        drawPlayerWindow(screen, 0, headerHeight + topPanelHeight, leftPanelWidth, bottomPanelHeight, plr, current_choice, current_status);
 
         const std::size_t gridOffsetX = leftPanelWidth + 2;
-        const std::size_t gridOffsetY = headerHeight;
-        drawGridWindow(screen, grid, gridOffsetX, gridOffsetY, screen.width() - gridOffsetX, availableHeight, data.table);
-
+        drawGridWindow(screen, grid, gridOffsetX, headerHeight, screen.width() - gridOffsetX, availableHeight, data.table);
         drawBlocksWindow(screen, gridOffsetX, headerHeight + topPanelHeight, screen.width() - gridOffsetX, bottomPanelHeight, data.lineid);
 
     } else if (current_page == 2) {
-                screen.drawAsciiArt(3, 3,R"(
-******   **           **      ******** **********       ** **********
-/*////** /**          ****    **////// /////**///       /**/////**/// 
-/*   /** /**         **//**  /**           /**          /**    /**    
-/******  /**        **  //** /*********    /**          /**    /**    
-/*//// **/**       **********////////**    /**          /**    /**    
-/*    /**/**      /**//////**       /**    /**          /**    /**    
-/******* /********/**     /** ********     /**          /**    /**    
-///////  //////// //      // ////////      //           //     // 
+        screen.drawAsciiArt(3, 3, logo + R"(
 
                        Choose Difficulty
                             1. Easy
                            2. Medium
-                            3. Hard
-
-)");
+                            3. Hard)");
     }
     screen.present();
 }
