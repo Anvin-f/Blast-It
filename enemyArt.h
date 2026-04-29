@@ -2,26 +2,7 @@
 #define ENEMYART_H
 
 #include <string>
-#include <map>
-static std::map<std::string, std::string> EnemyArtMap = {
-    {"Goblin", 
-R"(
-   \\\|||///
- .  ======= 
-/ \| O   O |
-\ / \`___'/ 
- #   _| |_
-(#) (     )  
- #\//|* *|\\ 
- #\/(  *  )/   
- #   =====  
- #   ( U ) 
- #   || ||
-.#---'| |`----.
-`#----' `-----'
-)"},
-};
 
-
+const std::string& getEnemyArt(const std::string& name, int kills);
 
 #endif

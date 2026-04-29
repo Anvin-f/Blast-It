@@ -38,7 +38,7 @@ Gamedata playconfirm() {
     else data.choosen = 2;
 
     // check if the game is over
-    data.gameover = max({datalineid[0], data.lineid[1], data.lineid[2]}) != -1;
+    data.gameover = std::max({data.lineid[0], data.lineid[1], data.lineid[2]}) != -1;
     std::pair<int, int> compared = {-1, -1};
     if(data.lineid[0] != -1) data.gameover &= (checkallinsert(data, 0) == compared);
     if(data.lineid[1] != -1) data.gameover &= (checkallinsert(data, 1) == compared);

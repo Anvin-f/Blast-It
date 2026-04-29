@@ -17,20 +17,20 @@ Monster initMonster(int difficulty, int kills){
     Monster m;
     if (difficulty == 1){
         m.name = "Goblin";
-        m.hp = 30 + kills * 10;
-        m.attack = 8 + kills * 3;
+        m.hp = 60 + kills * 15;
+        m.attack = 10 + kills * 3;
         m.bounty = 30;
     }
     else if (difficulty == 2){
         m.name = "Orc";
-        m.hp = 50 + kills * 15;
-        m.attack = 12 + kills * 5;
+        m.hp = 100 + kills * 20;
+        m.attack = 14 + kills * 5;
         m.bounty = 50;
     }
     else if (difficulty == 3){
         m.name = "Dragon";
-        m.hp = 70 + kills * 25;
-        m.attack = 16 + kills * 8;
+        m.hp = 140 + kills * 25;
+        m.attack = 18 + kills * 8;
         m.bounty = 70;
     }
     m.max_hp = m.hp;
@@ -105,4 +105,36 @@ CombatResult resolveCombatTurn(Player & player, Monster & monster, const CombatC
     }
     r.log_message = log.str();
     return r;
+}
+
+//saves monster data to output stream
+void saveMonster(std::ostream & out, const Monster & m){
+    //save the string name
+    size_t nameLen = m.name.length();
+    out.write(reinterpret_cast<const char*>(&nameLen), sizeof(nameLen));
+    out.write(m.name.c_str(), nameLen);
+    
+    //save numeric fields
+    out.write(reinterpret_cast<const char*>(&m.hp), sizeof(m.hp));
+    out.write(reinterpret_cast<const char*>(&m.max_hp), sizeof(m.max_hp));
+    out.write(reinterpret_cast<const char*>(&m.attack), sizeof(m.attack));
+    out.write(reinterpret_cast<const char*>(&m.bounty), sizeof(m.bounty));
+}
+
+//loads monster data from input stream
+void loadMonster(std::istream & in, Monster & m){
+    //load the string name
+    size_t nameLen = 0;
+    in.read(reinterpret_cast<char*>(&nameLen), sizeof(nameLen));
+    char* buffer = new char[nameLen + 1];
+    in.read(buffer, nameLen);
+    buffer[nameLen] = '\0';
+    m.name = std::string(buffer);
+    delete[] buffer;
+    
+    //load numeric fields
+    in.read(reinterpret_cast<char*>(&m.hp), sizeof(m.hp));
+    in.read(reinterpret_cast<char*>(&m.max_hp), sizeof(m.max_hp));
+    in.read(reinterpret_cast<char*>(&m.attack), sizeof(m.attack));
+    in.read(reinterpret_cast<char*>(&m.bounty), sizeof(m.bounty));
 }

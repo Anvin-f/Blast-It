@@ -72,3 +72,25 @@ bool canUseSpecial(const Player & p){
         return p.kills >= 5;
     }
 }
+
+//saves player data to output stream
+void savePlayer(std::ostream & out, const Player & p){
+    out.write(reinterpret_cast<const char*>(&p.hp), sizeof(p.hp));
+    out.write(reinterpret_cast<const char*>(&p.max_hp), sizeof(p.max_hp));
+    out.write(reinterpret_cast<const char*>(&p.base_attack), sizeof(p.base_attack));
+    out.write(reinterpret_cast<const char*>(&p.defense), sizeof(p.defense));
+    out.write(reinterpret_cast<const char*>(&p.ap_reserve), sizeof(p.ap_reserve));
+    out.write(reinterpret_cast<const char*>(&p.kills), sizeof(p.kills));
+    out.write(reinterpret_cast<const char*>(&p.difficulty), sizeof(p.difficulty));
+}
+
+//loads player data from input stream
+void loadPlayer(std::istream & in, Player & p){
+    in.read(reinterpret_cast<char*>(&p.hp), sizeof(p.hp));
+    in.read(reinterpret_cast<char*>(&p.max_hp), sizeof(p.max_hp));
+    in.read(reinterpret_cast<char*>(&p.base_attack), sizeof(p.base_attack));
+    in.read(reinterpret_cast<char*>(&p.defense), sizeof(p.defense));
+    in.read(reinterpret_cast<char*>(&p.ap_reserve), sizeof(p.ap_reserve));
+    in.read(reinterpret_cast<char*>(&p.kills), sizeof(p.kills));
+    in.read(reinterpret_cast<char*>(&p.difficulty), sizeof(p.difficulty));
+}

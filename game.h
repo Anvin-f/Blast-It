@@ -36,12 +36,26 @@ private:
     bool isRPGMode = false;
     Player plr;
     Monster mtr;
+    CombatChoice current_choice = {0, false, 0, 0};
     int rpg_state = 0;
-    int current_attack_ap = 0;
-    bool current_use_special = false;
-    int current_heal_ap = 0;
-    int current_defend_ap = 0;
     std::string current_status;
     int current_page = 0;
     std::string current_input;
+    std::string logo = R"(
+******   **           **      ******** **********       ** **********
+/*////** /**          ****    **////// /////**///       /**/////**/// 
+/*   /** /**         **//**  /**           /**          /**    /**    
+/******  /**        **  //** /*********    /**          /**    /**    
+/*//// **/**       **********////////**    /**          /**    /**    
+/*    /**/**      /**//////**       /**    /**          /**    /**    
+/******* /********/**     /** ********     /**          /**    /**    
+///////  //////// //      // ////////      //           //     // 
+)";
+    std::vector<std::string> rpg_state_map = {
+        "", 
+        "Enter AP for Attack: ", 
+        "Enable Special? (1=yes, 0=no): ", 
+        "Enter AP for Heal: ", 
+        "Enter AP for Defend: "
+    };
 };

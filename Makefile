@@ -1,7 +1,7 @@
 FLAGS = -pedantic-errors -std=c++11 -Wall -Wextra
 
-blockblast: main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o
-	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o -o blockblast
+blastit: main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o enemyArt.o
+	g++ $(FLAGS) main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o enemyArt.o -o blastit
 
 main.o: main.cpp game.h
 	g++ $(FLAGS) -c main.cpp
@@ -33,10 +33,13 @@ blocklist.o: blocklist.cpp blocklist.h chooseblocks.h
 blockfunction.o: blockfunction.cpp blockfunction.h chooseblocks.h gamedata.h blocklist.h
 	g++ $(FLAGS) -c blockfunction.cpp
 
+enemyArt.o: enemyArt.cpp enemyArt.h
+	g++ $(FLAGS) -c enemyArt.cpp
+
 blockplay.o: blockplay.cpp blockplay.h gamedata.h blockfunction.h chooseblocks.h blocklist.h
 	g++ $(FLAGS) -c blockplay.cpp
 
 clean:
-	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o
+	rm -f blockblast main.o game.o grid.o screen.o combat.o player.o chooseblocks.o window.o blocklist.o blockfunction.o blockplay.o enemyArt.o
 
 .PHONY: clean
