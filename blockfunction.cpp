@@ -90,7 +90,6 @@ std::pair<int, int> checkallinsert(Gamedata data, int x) {
                 if(s[i] == '#' && std::max(nowr, nowc) < 8) {
                     ch &= data.table[nowr][nowc] == 0;
                 }
-                else if(std::max(nowr, nowc) >= 8) ch = false;
                 if(s[i] == '/') nowr++, nowc = c;
                 else nowc++;
             }
